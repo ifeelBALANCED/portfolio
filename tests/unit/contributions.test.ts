@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyStatuses,
+  orderLedger,
   parseLedger,
   pullRequestUrl,
   statusFromGitHub,
@@ -14,8 +15,8 @@ const valid = {
       repo: 'TanStack/db',
       stack: 'TypeScript',
       pullRequests: [
-        { number: 1745, title: 'Prevent ReDoS', status: 'merged', note: 'n' },
-        { number: 1746, title: 'Key index', status: 'closed', note: 'n' },
+        { number: 1745, title: 'Prevent ReDoS', status: 'merged', note: { en: 'n', uk: 'н' } },
+        { number: 1746, title: 'Key index', status: 'closed', note: { en: 'n', uk: 'н' } },
       ],
     },
   ],
@@ -26,7 +27,9 @@ const pr = (override: Record<string, unknown>) => ({
   repos: [
     {
       ...valid.repos[0],
-      pullRequests: [{ number: 1, title: 't', status: 'open', note: 'n', ...override }],
+      pullRequests: [
+        { number: 1, title: 't', status: 'open', note: { en: 'n', uk: 'н' }, ...override },
+      ],
     },
   ],
 });
@@ -81,6 +84,8 @@ describe('parseLedger', () => {
     ['a zero pull request number', pr({ number: 0 })],
     ['an empty title', pr({ title: '' })],
     ['a missing note', pr({ note: undefined })],
+    ['a note without a Ukrainian text', pr({ note: { en: 'n' } })],
+    ['an empty localized note', pr({ note: { en: 'n', uk: '' } })],
   ])('rejects %s', (_label, input) => {
     expect(() => parseLedger(input)).toThrow(/Invalid ledger/);
   });
@@ -118,12 +123,62 @@ describe('applyStatuses', () => {
       '2026-11-01',
     );
     expect(next.snapshot).toBe('2026-11-01');
-    expect(next.repos[0]?.pullRequests.map((pr) => pr.status)).toEqual(['merged', 'merged']);
+    expect(next.repos[0]?.pullRequests.map((item) => item.status)).toEqual(['merged', 'merged']);
     expect(ledger.repos[0]?.pullRequests[1]?.status).toBe('closed');
   });
 
   it('keeps the snapshot date when nothing changed', () => {
     const next = applyStatuses(ledger, new Map(), '2026-11-01');
     expect(next).toEqual(ledger);
+  });
+});
+
+const mk = (number: number, status: 'merged' | 'open' | 'closed') => ({
+  number,
+  title: `t${number}`,
+  status,
+  note: { en: 'n', uk: 'н' },
+});
+
+describe('orderLedger', () => {
+  const repos = [
+    { repo: 'a/open', stack: 's', pullRequests: [mk(1, 'open'), mk(2, 'open')] },
+    {
+      repo: 'b/mixed',
+      stack: 's',
+      pullRequests: [mk(3, 'closed'), mk(4, 'merged'), mk(5, 'open')],
+    },
+    { repo: 'c/merged', stack: 's', pullRequests: [mk(6, 'merged')] },
+    { repo: 'd/open', stack: 's', pullRequests: [mk(7, 'open')] },
+    {
+      repo: 'e/most-open',
+      stack: 's',
+      pullRequests: [mk(8, 'open'), mk(9, 'open'), mk(10, 'open')],
+    },
+    { repo: 'f/closed', stack: 's', pullRequests: [mk(11, 'closed')] },
+    { repo: 'g/closed', stack: 's', pullRequests: [mk(12, 'closed')] },
+  ];
+
+  it('puts repos with merged work first, then by open count, keeping input order on ties', () => {
+    expect(orderLedger(repos).map((r) => r.repo)).toEqual([
+      'b/mixed',
+      'c/merged',
+      'e/most-open',
+      'a/open',
+      'd/open',
+      'f/closed',
+      'g/closed',
+    ]);
+  });
+
+  it('lists merged, then open, then closed pull requests inside a repo', () => {
+    const mixed = orderLedger(repos)[0];
+    expect(mixed?.pullRequests.map((p) => p.number)).toEqual([4, 5, 3]);
+  });
+
+  it('does not mutate its input', () => {
+    const before = JSON.stringify(repos);
+    orderLedger(repos);
+    expect(JSON.stringify(repos)).toBe(before);
   });
 });

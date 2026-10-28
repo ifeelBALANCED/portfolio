@@ -1,3 +1,5 @@
+import { type Localized } from './locale';
+
 const STATUSES = ['merged', 'open', 'closed'] as const;
 export type PullRequestStatus = (typeof STATUSES)[number];
 
@@ -5,7 +7,7 @@ interface PullRequest {
   readonly number: number;
   readonly title: string;
   readonly status: PullRequestStatus;
-  readonly note: string;
+  readonly note: Localized<string>;
 }
 
 export interface RepoContributions {
@@ -34,6 +36,11 @@ const text = (value: unknown, field: string): string =>
     ? value
     : fail(`${field} must be a non-empty string`);
 
+const localizedText = (value: unknown, field: string): Localized<string> => {
+  if (!isRecord(value)) return fail(`${field} must be an object with a text per locale`);
+  return { en: text(value.en, `${field}.en`), uk: text(value.uk, `${field}.uk`) };
+};
+
 const isStatus = (value: unknown): value is PullRequestStatus =>
   STATUSES.some((status) => status === value);
 
@@ -50,7 +57,7 @@ const parsePullRequest = (value: unknown): PullRequest => {
     number,
     title: text(value.title, 'title'),
     status: parseStatus(value.status),
-    note: text(value.note, 'note'),
+    note: localizedText(value.note, 'note'),
   };
 };
 
@@ -113,3 +120,23 @@ export const applyStatuses = (
   }));
   return changed ? { snapshot, repos } : ledger;
 };
+
+const STATUS_RANK: Record<PullRequestStatus, number> = { merged: 0, open: 1, closed: 2 };
+
+const countOf = (repo: RepoContributions, status: PullRequestStatus): number =>
+  repo.pullRequests.filter((pr) => pr.status === status).length;
+
+/** Strongest proof first: repos with merged work, then more open work. */
+export const orderLedger = (repos: readonly RepoContributions[]): readonly RepoContributions[] =>
+  repos
+    .map((repo) => ({
+      ...repo,
+      pullRequests: repo.pullRequests.toSorted(
+        (a, b) => STATUS_RANK[a.status] - STATUS_RANK[b.status],
+      ),
+    }))
+    // Array#toSorted is stable, so ties keep their input order.
+    .toSorted(
+      (a, b) =>
+        countOf(b, 'merged') - countOf(a, 'merged') || countOf(b, 'open') - countOf(a, 'open'),
+    );

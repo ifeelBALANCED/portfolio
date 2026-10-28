@@ -9,25 +9,37 @@
           "number": 1745,
           "title": "Prevent ReDoS in like()/ilike() matching",
           "status": "merged",
-          "note": "Replaced backtracking pattern matching with an iterative two-pointer matcher; checked against the old one with a 200k-case differential fuzz."
+          "note": {
+            "en": "Replaced backtracking pattern matching with an iterative two-pointer matcher; checked against the old one with a 200k-case differential fuzz.",
+            "uk": "Замінив backtracking-зіставлення шаблонів на ітеративний two-pointer matcher; звірив зі старим через диференційний fuzz на 200 тис. випадків."
+          }
         },
         {
           "number": 1748,
           "title": "Drive inner joins from a correlation-bounded lazy side inside includes",
           "status": "closed",
-          "note": "Fixes #1709: 289 ms to 1 ms on a 200k-row case."
+          "note": {
+            "en": "Fixes #1709: 289 ms to 1 ms on a 200k-row case.",
+            "uk": "Виправляє #1709: з 289 мс до 1 мс на випадку з 200 тис. рядків."
+          }
         },
         {
           "number": 1746,
           "title": "Serve joins on a collection primary key via an implicit key index",
           "status": "closed",
-          "note": "Fixes #1708: derives a synthetic index from getKey instead of requiring a manual one."
+          "note": {
+            "en": "Fixes #1708: derives a synthetic index from getKey instead of requiring a manual one.",
+            "uk": "Виправляє #1708: виводить синтетичний індекс із getKey замість ручного."
+          }
         },
         {
           "number": 1747,
           "title": "Support nested optional property access in SingleRowRefProxy",
           "status": "closed",
-          "note": "Fixes #1726: row.updatedAt?.seconds now type-checks in where/createIndex callbacks."
+          "note": {
+            "en": "Fixes #1726: row.updatedAt?.seconds now type-checks in where/createIndex callbacks.",
+            "uk": "Виправляє #1726: row.updatedAt?.seconds тепер проходить перевірку типів у колбеках where/createIndex."
+          }
         }
       ]
     },
@@ -39,25 +51,37 @@
           "number": 25843,
           "title": "linter/vue: no-deprecated-dollar-listeners-api",
           "status": "open",
-          "note": "Part of the Vue plugin umbrella issue #11440."
+          "note": {
+            "en": "Part of the Vue plugin umbrella issue #11440.",
+            "uk": "Частина umbrella-issue #11440 для Vue-плагіна."
+          }
         },
         {
           "number": 25844,
           "title": "linter/vue: no-deprecated-dollar-scopedslots-api",
           "status": "open",
-          "note": "Includes an auto-fix that rewrites $scopedSlots to $slots."
+          "note": {
+            "en": "Includes an auto-fix that rewrites $scopedSlots to $slots.",
+            "uk": "Містить автофікс, що переписує $scopedSlots на $slots."
+          }
         },
         {
           "number": 25845,
           "title": "linter/vue: component-options-name-casing",
           "status": "open",
-          "note": "Snapshot-tested rule with generated config schema."
+          "note": {
+            "en": "Snapshot-tested rule with generated config schema.",
+            "uk": "Правило з snapshot-тестами та згенерованою схемою конфігурації."
+          }
         },
         {
           "number": 25846,
           "title": "linter/vue: no-mutating-props",
           "status": "open",
-          "note": "Handles aliasing through const this-aliases."
+          "note": {
+            "en": "Handles aliasing through const this-aliases.",
+            "uk": "Враховує аліасинг через const this-аліаси."
+          }
         }
       ]
     },
@@ -69,13 +93,19 @@
           "number": 61719,
           "title": "git_ui: Resolve merge conflicts from the keyboard",
           "status": "open",
-          "note": "Keyboard-driven conflict resolution in the git panel."
+          "note": {
+            "en": "Keyboard-driven conflict resolution in the git panel.",
+            "uk": "Розв’язання конфліктів злиття з клавіатури в git-панелі."
+          }
         },
         {
           "number": 61851,
           "title": "sidebar: Show the worktree name for subdirectory workspaces",
           "status": "open",
-          "note": "Small UX fix for multi-project windows."
+          "note": {
+            "en": "Small UX fix for multi-project windows.",
+            "uk": "Невеликий UX-фікс для вікон із кількома проєктами."
+          }
         }
       ]
     },
@@ -87,7 +117,10 @@
           "number": 377,
           "title": "Add EXPLAIN support to the SQL editor for PostgreSQL",
           "status": "merged",
-          "note": "Query plans from inside the editor."
+          "note": {
+            "en": "Query plans from inside the editor.",
+            "uk": "Плани запитів прямо з редактора."
+          }
         }
       ]
     }
