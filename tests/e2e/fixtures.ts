@@ -1,8 +1,9 @@
 import { expect, test as base, type Page } from '@playwright/test';
+import { readEnv } from '../../src/domain/env';
 import { localizedPath, type Locale } from '../../src/domain/locale';
 
-/** Mirrors `site` in astro.config.mjs on purpose: a changed origin should fail the metadata tests. */
-export const SITE = 'https://vladyslav-herasymenko.vercel.app';
+/** Same source as `site` in astro.config.mjs, so a build with another SITE_URL is tested against it. */
+export const SITE = readEnv(process.env).siteUrl;
 
 interface Options {
   /** Which language edition `home` opens. */

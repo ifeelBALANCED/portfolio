@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
+import { readEnv } from '../../src/domain/env';
 import { LOCALES, localizedPath, type Locale } from '../../src/domain/locale';
 import { THEMES } from '../../src/domain/themes';
 import { t } from '../../src/i18n';
@@ -307,7 +308,7 @@ test.describe('without JavaScript', () => {
 
 test('production sends the security headers', { tag: '@smoke' }, async ({ request }) => {
   test.skip(
-    !process.env.BASE_URL,
+    !readEnv(process.env).baseUrl,
     'headers come from vercel.json; astro preview does not apply them',
   );
   const headers = (await request.get('/')).headers();

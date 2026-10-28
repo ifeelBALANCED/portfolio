@@ -1,9 +1,10 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { applyStatuses, parseLedger, type PullRequestStatus } from '../src/domain/contributions.ts';
+import { readEnv } from '../src/domain/env.ts';
 import { fetchStatus } from './github.ts';
 
 const LEDGER_PATH = new URL('../src/data/ledger.json', import.meta.url);
-const options = { fetch, token: process.env.GITHUB_TOKEN };
+const options = { fetch, token: readEnv(process.env).githubToken };
 
 const ledger = parseLedger(JSON.parse(readFileSync(LEDGER_PATH, 'utf8')));
 const states = new Map<string, PullRequestStatus>();

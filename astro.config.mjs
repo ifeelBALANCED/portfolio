@@ -1,8 +1,9 @@
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'astro/config';
+import { readEnv } from './src/domain/env.ts';
 
 export default defineConfig({
-  site: 'https://vladyslav-herasymenko.vercel.app',
+  site: readEnv(process.env).siteUrl,
   output: 'static',
   build: { inlineStylesheets: 'always' },
   i18n: {

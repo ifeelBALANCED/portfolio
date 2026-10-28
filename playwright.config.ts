@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import { readEnv } from './src/domain/env.ts';
 
-const ci = Boolean(process.env.CI);
-const remote = process.env.BASE_URL;
+const { ci, baseUrl: remote } = readEnv(process.env);
 
 export default defineConfig({
   testDir: 'tests/e2e',

@@ -18,6 +18,7 @@ Read when touching `src/`, `scripts/`, build config or toolchain versions.
 - Playwright starts `astro preview --ignore-lock`: Astro 7 preview uses a lockfile and refuses a second instance.
 - `tailwindcss` is only referenced from CSS, so knip lists it in `ignoreDependencies`. Font packages are picked up through the `?url` preload imports in `Base.astro`.
 - Scripts import `.ts` extensions directly (Node type stripping); `tsconfig` sets `allowImportingTsExtensions`.
+- Environment: read only through `readEnv` in `src/domain/env.ts` (validated, typed, blank means unset); no other `process.env`. Every variable is optional and listed in `.env.example`. Secrets exist for CI and scripts only (`GITHUB_TOKEN`, optional `LEDGER_TOKEN`); the static output carries none, and a new one needs a stated reason.
 
 ## Domain vocabulary
 
