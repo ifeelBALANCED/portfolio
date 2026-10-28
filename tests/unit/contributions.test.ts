@@ -70,28 +70,34 @@ describe('parseLedger', () => {
   });
 
   it.each([
-    ['a repo entry that is not an object', { ...valid, repos: ['x'] }],
+    [
+      'a repo entry that is not an object',
+      { ...valid, repos: ['x'] },
+      /repo entry must be an object/,
+    ],
     [
       'a repo without pull requests',
       { ...valid, repos: [{ ...valid.repos[0], pullRequests: [] }] },
+      /needs at least one pull request/,
     ],
-    ['repos that are not an array', { ...valid, repos: {} }],
+    ['repos that are not an array', { ...valid, repos: {} }, /repos must be an array/],
     [
       'a pull request that is not an object',
       { ...valid, repos: [{ ...valid.repos[0], pullRequests: [1] }] },
+      /pull request must be an object/,
     ],
-    ['a non-integer pull request number', pr({ number: 1.5 })],
-    ['a zero pull request number', pr({ number: 0 })],
-    ['an empty title', pr({ title: '' })],
-    ['a missing note', pr({ note: undefined })],
-    ['a note without a Ukrainian text', pr({ note: { en: 'n' } })],
-    ['an empty localized note', pr({ note: { en: 'n', uk: '' } })],
-  ])('rejects %s', (_label, input) => {
-    expect(() => parseLedger(input)).toThrow(/Invalid ledger/);
+    ['a non-integer pull request number', pr({ number: 1.5 }), /positive integer/],
+    ['a zero pull request number', pr({ number: 0 }), /positive integer/],
+    ['an empty title', pr({ title: '' }), /title must be a non-empty string/],
+    ['a missing note', pr({ note: undefined }), /note must be an object/],
+    ['a note without a Ukrainian text', pr({ note: { en: 'n' } }), /note\.uk must be a non-empty/],
+    ['an empty localized note', pr({ note: { en: 'n', uk: '' } }), /note\.uk must be a non-empty/],
+  ])('rejects %s', (_label, input, message) => {
+    expect(() => parseLedger(input)).toThrow(message);
   });
 
   it.each([[null], [[]], ['text'], [42]])('rejects %j as the whole ledger', (input) => {
-    expect(() => parseLedger(input)).toThrow(/Invalid ledger/);
+    expect(() => parseLedger(input)).toThrow(/Invalid ledger: expected an object/);
   });
 
   it('accepts pull request number 1', () => {
@@ -101,7 +107,24 @@ describe('parseLedger', () => {
 
 describe('tally', () => {
   it('counts pull requests by status across repos', () => {
-    expect(tally(parseLedger(valid).repos)).toEqual({ merged: 1, open: 0, closed: 1 });
+    const note = { en: 'n', uk: 'н' };
+    const repos = [
+      {
+        repo: 'a/b',
+        stack: 's',
+        pullRequests: [
+          { number: 1, title: 't', status: 'open' as const, note },
+          { number: 2, title: 't', status: 'open' as const, note },
+          { number: 3, title: 't', status: 'merged' as const, note },
+        ],
+      },
+      {
+        repo: 'c/d',
+        stack: 's',
+        pullRequests: [{ number: 1, title: 't', status: 'closed' as const, note }],
+      },
+    ];
+    expect(tally(repos)).toEqual({ merged: 1, open: 2, closed: 1 });
   });
 });
 
@@ -127,9 +150,16 @@ describe('applyStatuses', () => {
     expect(ledger.repos[0]?.pullRequests[1]?.status).toBe('closed');
   });
 
-  it('keeps the snapshot date when nothing changed', () => {
-    const next = applyStatuses(ledger, new Map(), '2026-11-01');
-    expect(next).toEqual(ledger);
+  // refresh-ledger.ts skips the write when it gets the very same object back.
+  it.each([
+    ['no answers', new Map<string, 'merged'>()],
+    ['an answer equal to the current status', new Map([['TanStack/db#1745', 'merged' as const]])],
+    [
+      'an answer for a pull request that is not listed',
+      new Map([['TanStack/db#9', 'open' as const]]),
+    ],
+  ])('returns the same ledger when given %s', (_label, answers) => {
+    expect(applyStatuses(ledger, answers, '2026-11-01')).toBe(ledger);
   });
 });
 

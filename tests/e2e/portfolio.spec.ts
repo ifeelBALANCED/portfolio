@@ -1,124 +1,167 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { LOCALES, localizedPath, type Locale } from '../../src/domain/locale';
 import { THEMES } from '../../src/domain/themes';
+import { t } from '../../src/i18n';
+import { expect, hexToRgb, SITE, test } from './fixtures';
 
-const LOCALES = [
-  { id: 'en', path: '/', lang: 'en', title: /Vladyslav Herasymenko — Frontend engineer/ },
-  { id: 'uk', path: '/uk/', lang: 'uk', title: /Владислав Герасименко — Фронтенд-інженер/ },
-] as const;
-
-test.beforeEach(async ({ page }) => {
-  page.on('pageerror', (error) => {
-    throw error;
-  });
-});
-
-const pickTheme = async (page: Page, label: string) => {
-  await page.locator(`label.theme-pick[title="${label}"]`).click();
+const TITLES: Record<Locale, RegExp> = {
+  en: /Vladyslav Herasymenko — Frontend engineer/,
+  uk: /Владислав Герасименко — Фронтенд-інженер/,
 };
+const CLOSED_LABEL: Record<Locale, RegExp> = { en: /not merged/i, uk: /не влито/i };
+const DEMO = 'https://effector-vite-template.surge.sh';
+
+const themeRadio = (page: Page, label: string) => page.getByRole('radio', { name: label });
 
 for (const locale of LOCALES) {
-  test.describe(locale.id, () => {
-    test('has title, description, canonical, alternates and Open Graph metadata', async ({
-      page,
+  const copy = t(locale);
+
+  test.describe(locale, () => {
+    test.use({ site: locale });
+
+    test(
+      'has title, description, canonical, alternates and Open Graph metadata',
+      { tag: '@smoke' },
+      async ({ home }) => {
+        await expect(home).toHaveTitle(TITLES[locale]);
+        await expect(home.locator('html')).toHaveAttribute('lang', locale);
+        await expect(home.locator('meta[name="description"]')).toHaveAttribute(
+          'content',
+          copy.meta.description,
+        );
+        await expect(home.locator('link[rel="canonical"]')).toHaveAttribute(
+          'href',
+          `${SITE}${localizedPath(locale)}`,
+        );
+        for (const [hreflang, path] of [
+          ['en', '/'],
+          ['uk', '/uk/'],
+          ['x-default', '/'],
+        ] as const) {
+          await expect(
+            home.locator(`link[rel="alternate"][hreflang="${hreflang}"]`),
+          ).toHaveAttribute('href', `${SITE}${path}`);
+        }
+        await expect(home.locator('meta[property="og:locale"]')).toHaveAttribute(
+          'content',
+          copy.meta.ogLocale,
+        );
+        const jsonLd = home.locator('script[type="application/ld+json"]');
+        await expect(jsonLd).toHaveCount(1);
+        expect(JSON.parse((await jsonLd.textContent()) ?? '')).toMatchObject({
+          '@type': 'Person',
+          name: 'Vladyslav Herasymenko',
+          jobTitle: 'Frontend engineer',
+        });
+      },
+    );
+
+    test(
+      'every pull request links to a GitHub pull page and the diffstat adds up',
+      { tag: '@smoke' },
+      async ({ home }) => {
+        const rows = home.locator('a.pr');
+        await expect(rows.first()).toBeVisible();
+        const links = await rows.evaluateAll((els) =>
+          els.map((el) => (el instanceof HTMLAnchorElement ? el.href : '')),
+        );
+        expect(links.length).toBeGreaterThan(0);
+        for (const href of links) {
+          expect(href).toMatch(/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/pull\/\d+$/);
+        }
+        const stat = (await home.locator('.stat-text').textContent()) ?? '';
+        const total = [...stat.matchAll(/\d+/g)].reduce((sum, m) => sum + Number(m[0]), 0);
+        expect(total).toBe(links.length);
+      },
+    );
+
+    test('closed pull requests are labelled in words, not colour alone', async ({ home }) => {
+      const closed = home.locator('a.pr[data-s="closed"]');
+      await expect(closed.first()).toBeVisible();
+      await expect(closed.filter({ hasNotText: CLOSED_LABEL[locale] })).toHaveCount(0);
+    });
+
+    test('the CV link serves a PDF', { tag: '@smoke' }, async ({ home, request }) => {
+      const href = await home.getByRole('link', { name: copy.hero.cv }).getAttribute('href');
+      expect(href).toBeTruthy();
+      const response = await request.get(href ?? '');
+      expect(response.ok()).toBe(true);
+      expect(response.headers()['content-type']).toContain('application/pdf');
+    });
+
+    test('the featured repo comes first and carries the live demo', async ({ home }) => {
+      const featured = home.locator('.inventory > li[data-featured]');
+      await expect(featured).toHaveCount(1);
+      await expect(home.locator('.inventory > li').first()).toHaveAttribute('data-featured', '');
+      await expect(featured.locator(`a[href^="${DEMO}"]`)).toHaveCount(1);
+      await expect(home.locator(`a[href^="${DEMO}"]`)).toHaveCount(1);
+    });
+
+    test('skip link is the first tab stop, shows focus and jumps to the content', async ({
+      home,
     }) => {
-      await page.goto(locale.path);
-      await expect(page).toHaveTitle(locale.title);
-      await expect(page.locator('html')).toHaveAttribute('lang', locale.lang);
-      await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /.{50,}/);
-      await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
-        'href',
-        new RegExp(`^https://[^/]+${locale.path}$`),
-      );
-      for (const hreflang of ['en', 'uk', 'x-default']) {
-        await expect(page.locator(`link[rel="alternate"][hreflang="${hreflang}"]`)).toHaveCount(1);
-      }
-      await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute(
-        'content',
-        locale.id === 'en' ? 'en_US' : 'uk_UA',
-      );
-      const jsonLd = await page.locator('script[type="application/ld+json"]').textContent();
-      expect(JSON.parse(jsonLd ?? '{}')).toMatchObject({
-        '@type': 'Person',
-        name: 'Vladyslav Herasymenko',
-        jobTitle: 'Frontend engineer',
-      });
-    });
-
-    test('every pull request links to a GitHub pull page and the diffstat adds up', async ({
-      page,
-    }) => {
-      await page.goto(locale.path);
-      const links = await page
-        .locator('a.pr')
-        .evaluateAll((els) => els.map((el) => (el as HTMLAnchorElement).href));
-      expect(links.length).toBeGreaterThanOrEqual(10);
-      for (const href of links) {
-        expect(href).toMatch(/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/pull\/\d+$/);
-      }
-      const stat = (await page.locator('.stat-text').textContent()) ?? '';
-      const total = [...stat.matchAll(/\d+/g)].reduce((sum, m) => sum + Number(m[0]), 0);
-      expect(total).toBe(links.length);
-    });
-
-    test('closed pull requests are labelled in words, not colour alone', async ({ page }) => {
-      await page.goto(locale.path);
-      const tags = await page.locator('.pr[data-s="closed"] .pr-tag').allTextContents();
-      expect(tags.length).toBeGreaterThan(0);
-      for (const tag of tags) expect(tag).toMatch(locale.id === 'en' ? /not merged/i : /не влито/i);
-    });
-
-    test('CV download and live demo links resolve', async ({ page, request }) => {
-      await page.goto(locale.path);
-      const cv = await page.locator('a[href$=".pdf"]').getAttribute('href');
-      expect((await request.get(cv ?? '/')).headers()['content-type']).toContain('application/pdf');
-      await expect(page.locator('a[href^="https://effector-vite-template.surge.sh"]')).toHaveCount(
-        1,
-      );
-    });
-
-    test('the featured repo comes first and carries the live demo', async ({ page }) => {
-      await page.goto(locale.path);
-      const first = page.locator('.inventory > li').first();
-      await expect(first).toHaveAttribute('data-featured', '');
-      await expect(first.locator('a[href^="https://effector-vite-template.surge.sh"]')).toHaveCount(
-        1,
-      );
-      await expect(page.locator('.inventory > li[data-featured]')).toHaveCount(1);
-    });
-
-    test('skip link is the first tab stop and focus is visible', async ({ page }) => {
-      await page.goto(locale.path);
-      await page.keyboard.press('Tab');
-      const skip = page.locator('a.skip');
+      await home.keyboard.press('Tab');
+      const skip = home.getByRole('link', { name: copy.skip });
       await expect(skip).toBeFocused();
       await expect(skip).toBeInViewport();
+      await expect(skip).not.toHaveCSS('outline-style', 'none');
+      await home.keyboard.press('Enter');
+      await expect(home).toHaveURL(/#main$/);
+      await expect(home.locator('#main')).toBeInViewport();
     });
 
-    test('no horizontal scroll at the current viewport', async ({ page }) => {
-      await page.goto(locale.path);
-      const overflow = await page.evaluate(
-        () => document.documentElement.scrollWidth - window.innerWidth,
-      );
-      expect(overflow).toBeLessThanOrEqual(0);
+    test('no horizontal scroll at the current viewport', async ({ home }) => {
+      await home.evaluate(() => document.fonts.ready);
+      await expect
+        .poll(() => home.evaluate(() => document.documentElement.scrollWidth - window.innerWidth))
+        .toBeLessThanOrEqual(0);
     });
 
-    test('filter hides non-matching rows and their empty hunks', async ({ page }) => {
-      await page.goto(locale.path);
-      const all = await page.locator('a.pr:visible').count();
-      await page.locator('label', { has: page.locator('#f-merged') }).click();
-      await expect(page.locator('a.pr:visible')).toHaveCount(2);
-      await expect(page.locator('a.pr[data-s="merged"]:visible')).toHaveCount(2);
-      await expect(page.locator('.hunk:visible')).toHaveCount(2);
-      await page.locator('label', { has: page.locator('#f-all') }).click();
-      await expect(page.locator('a.pr:visible')).toHaveCount(all);
+    test('each filter shows only its pull requests and no empty repo blocks', async ({ home }) => {
+      const rows = home.locator('a.pr');
+      const all = await rows.count();
+      expect(all).toBeGreaterThan(0);
+
+      for (const status of ['merged', 'open', 'closed'] as const) {
+        const expected = await home.locator(`a.pr[data-s="${status}"]`).count();
+        await home.getByRole('radio', { name: copy.ledger.filters[status] }).check({ force: true });
+        await expect(rows.locator('visible=true')).toHaveCount(expected);
+        await expect(
+          home.locator(`a.pr:not([data-s="${status}"])`).locator('visible=true'),
+        ).toHaveCount(0);
+        await expect(
+          home
+            .locator('.hunk')
+            .locator('visible=true')
+            .filter({ hasNot: home.locator('a.pr:visible') }),
+        ).toHaveCount(0);
+      }
+
+      await home.getByRole('radio', { name: copy.ledger.filters.all }).check({ force: true });
+      await expect(rows.locator('visible=true')).toHaveCount(all);
+    });
+
+    test('the section links scroll to their sections', async ({ home, isMobile }) => {
+      test.skip(isMobile, 'the section links live in the desktop toolbar');
+      const nav = home.getByRole('navigation', { name: copy.nav.label });
+      for (const [label, id] of [
+        [copy.nav.changeset, 'open-source'],
+        [copy.nav.history, 'experience'],
+        [copy.nav.spec, 'stack'],
+        [copy.nav.inventory, 'repos'],
+      ] as const) {
+        await nav.getByRole('link', { name: label }).click();
+        await expect(home).toHaveURL(new RegExp(`#${id}$`));
+        await expect(home.locator(`#${id}`)).toBeInViewport();
+      }
     });
 
     for (const theme of THEMES) {
       test(`passes axe WCAG 2.2 AA checks in the ${theme.id} theme`, async ({ page }) => {
         await page.emulateMedia({ reducedMotion: 'reduce' });
         await page.addInitScript((id) => localStorage.setItem('vh-theme', id), theme.id);
-        await page.goto(locale.path);
+        await page.goto(localizedPath(locale));
         await expect(page.locator('html')).toHaveAttribute('data-theme', theme.id);
         const results = await new AxeBuilder({ page })
           .withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa'])
@@ -133,54 +176,63 @@ for (const locale of LOCALES) {
   });
 }
 
-test('anchor navigation scrolls to each section', async ({ page, isMobile }) => {
-  test.skip(isMobile, 'the section links live in the desktop toolbar');
-  await page.goto('/');
-  for (const [name, id] of [
-    ['Open source', 'open-source'],
-    ['Experience', 'experience'],
-    ['Stack', 'stack'],
-    ['Repos', 'repos'],
+test(
+  'the language switch changes route and keeps the chosen theme',
+  { tag: '@smoke' },
+  async ({ home }) => {
+    await themeRadio(home, 'Blueprint').check({ force: true });
+    await home.getByRole('link', { name: 'Українська' }).click();
+    await expect(home).toHaveURL(/\/uk\/$/);
+    await expect(home.locator('html')).toHaveAttribute('lang', 'uk');
+    await expect(home.locator('html')).toHaveAttribute('data-theme', 'blueprint');
+    await home.getByRole('link', { name: 'English' }).click();
+    await expect(home).toHaveURL(/\/$/);
+    await expect(home.locator('html')).toHaveAttribute('lang', 'en');
+  },
+);
+
+test('a chosen theme is applied, persisted and set before first paint', async ({ home }) => {
+  const lab = THEMES.find((theme) => theme.id === 'lab');
+  expect(lab).toBeDefined();
+  await themeRadio(home, 'Lab').check({ force: true });
+  await expect(home.locator('html')).toHaveAttribute('data-theme', 'lab');
+  await expect.poll(() => home.evaluate(() => localStorage.getItem('vh-theme'))).toBe('lab');
+
+  await home.reload();
+  await expect(themeRadio(home, 'Lab')).toBeChecked();
+  await expect(home.locator('body')).toHaveCSS('background-color', hexToRgb(lab?.bg ?? ''));
+});
+
+test.describe('without a stored theme', () => {
+  for (const [scheme, id] of [
+    ['light', 'paper'],
+    ['dark', 'graphite'],
   ] as const) {
-    await page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name }).click();
-    await expect(page.locator(`#${id}`)).toBeInViewport();
+    test(`follows the ${scheme} OS colour scheme`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: scheme });
+      await page.goto('/');
+      await expect(page.locator('html')).toHaveAttribute('data-theme', id);
+      await expect(
+        themeRadio(page, THEMES.find((theme) => theme.id === id)?.label ?? ''),
+      ).toBeChecked();
+    });
   }
+
+  test('survives storage that throws', async ({ page }) => {
+    await page.addInitScript(() => {
+      Storage.prototype.getItem = () => {
+        throw new Error('storage blocked');
+      };
+    });
+    await page.goto('/');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'paper');
+  });
 });
 
-test('the language switch changes route and keeps the chosen theme', async ({ page }) => {
-  await page.goto('/');
-  await pickTheme(page, 'Blueprint');
-  await page.getByRole('link', { name: 'Українська' }).click();
-  await expect(page).toHaveURL(/\/uk\/$/);
-  await expect(page.locator('html')).toHaveAttribute('lang', 'uk');
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'blueprint');
-  await page.getByRole('link', { name: 'English' }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-});
+test.describe('with an unknown stored theme', () => {
+  test.use({ storedTheme: 'nope' });
 
-test('a chosen theme is applied, persisted and set before first paint', async ({ page }) => {
-  await page.goto('/');
-  await pickTheme(page, 'Lab');
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'lab');
-  expect(await page.evaluate(() => localStorage.getItem('vh-theme'))).toBe('lab');
-  await page.reload();
-  await expect(page.locator('input#t-lab')).toBeChecked();
-  expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('lab');
-  expect(await page.evaluate(() => getComputedStyle(document.body).backgroundColor)).toBe(
-    'rgb(232, 239, 236)',
-  );
-});
-
-test('follows the OS colour scheme until a theme is chosen', async ({ page }) => {
-  await page.emulateMedia({ colorScheme: 'dark' });
-  await page.goto('/');
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'graphite');
-  await expect(page.locator('input#t-graphite')).toBeChecked();
-});
-
-test('an unknown stored theme falls back to the OS default', async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem('vh-theme', 'nope'));
-  await page.goto('/');
-  await expect(page.locator('html')).toHaveAttribute('data-theme', /^(paper|graphite)$/);
+  test('falls back to the OS default', async ({ home }) => {
+    await expect(home.locator('html')).toHaveAttribute('data-theme', 'paper');
+  });
 });

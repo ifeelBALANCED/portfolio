@@ -8,3 +8,4 @@ playwright-report
 .metrics
 target
 .omc/
+coverage/

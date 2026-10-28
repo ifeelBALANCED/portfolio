@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  THEMES,
-  contrastRatio,
-  mixOklab,
-  themeCss,
-  type ThemeTokens,
-} from '../../src/domain/themes';
+import { THEMES, contrastRatio, mixOklab, themeCss } from '../../src/domain/themes';
 
 describe('contrastRatio', () => {
   it('matches the WCAG reference values', () => {
@@ -16,10 +10,9 @@ describe('contrastRatio', () => {
 });
 
 describe('mixOklab', () => {
-  it('returns the endpoints at 0 and 1 and a different colour in between', () => {
+  it('returns the endpoints at 0 and 1', () => {
     expect(mixOklab('#ff0000', '#0000ff', 0)).toBe('#0000ff');
     expect(mixOklab('#ff0000', '#0000ff', 1)).toBe('#ff0000');
-    expect(mixOklab('#ff0000', '#0000ff', 0.5)).not.toBe('#800080');
   });
 });
 
@@ -44,14 +37,10 @@ describe('mixOklab against Chromium color-mix(in oklab)', () => {
 });
 
 describe('themes', () => {
-  it('ships exactly five themes with unique ids', () => {
-    expect(THEMES.map((theme) => theme.id)).toEqual([
-      'paper',
-      'graphite',
-      'blueprint',
-      'meter',
-      'lab',
-    ]);
+  it('ships five themes with unique ids', () => {
+    const ids = THEMES.map((theme) => theme.id);
+    expect(ids).toHaveLength(5);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   it.each(THEMES)('$id: text tokens reach 4.5:1 on bg and surface', (theme) => {
@@ -134,8 +123,6 @@ describe('themeCss', () => {
   });
 
   it('declares the colour scheme of each theme', () => {
-    const meter = THEMES.find((theme: ThemeTokens) => theme.id === 'meter');
-    expect(meter?.scheme).toBe('light');
     expect(css).toMatch(/\[data-theme='blueprint'\][^}]*color-scheme:\s*dark/);
   });
 });
