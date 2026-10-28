@@ -23,6 +23,13 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm test:e2e
+      # Tagged subset on one project: the full suite already gated this commit in ci.yml.
+      - run: pnpm exec playwright test --grep @smoke --project=desktop
         env:
           BASE_URL: ${{ github.event.deployment_status.environment_url }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-smoke-report
+          path: test-results
+          retention-days: 7

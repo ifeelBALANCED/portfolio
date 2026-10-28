@@ -8,9 +8,11 @@ Read before committing, and when adding tests, CI or dependencies.
 
 ## Testing
 
-- Unit tests target `src/domain` and `scripts/github.ts` through their public functions. E2E asserts what a visitor sees (metadata, nav, links, a11y), not markup details.
+- Unit tests target `src/domain` and `scripts/github.ts` through their public functions; `vitest.config.ts` holds the coverage scope and a 100% floor on it. External boundaries are injected (`fetch`), never module-mocked; doubles live in `tests/support/`. `node-entrypoints.test.ts` loads the script modules under plain Node, because Vitest resolves extensionless imports and Node does not: relative imports in `src/domain` and `scripts` carry `.ts`.
+- E2E asserts what a visitor sees (metadata, nav, links, a11y), not markup details. Import `test`/`expect` from `tests/e2e/fixtures.ts`: `site` (locale), `storedTheme` and `home` fixtures, plus an automatic `errors` fixture that fails any test on a page error or `console.error`. Counts that come from `ledger.json` are read from the page, never hard-coded: the weekly refresh changes them.
+- Tests tagged `@smoke` are what `production-smoke.yml` runs against the live URL (desktop project only). The full suite runs in `ci.yml` and `refresh-ledger.yml` before a push.
+- `playwright.config.ts`: CI gets `forbidOnly`, one retry, two workers and an HTML report; traces and screenshots are kept on failure. `test:e2e` serves the existing `dist`, so run `pnpm build` first (verify and CI do).
 - Fix a bug by first adding a test that reproduces it.
-- Test code runs `pageerror` as failure; do not swallow console errors.
 - Oxlint forbids `no-console` except in `scripts/`; `any` and ts-comments are errors. Do not suppress, fix the cause.
 
 ## Dependencies

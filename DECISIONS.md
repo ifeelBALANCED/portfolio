@@ -15,7 +15,7 @@ Newest first. Rules in `.agents/rules/` hold current truth; this file holds why,
 ## 2026-10-28 Agent infrastructure
 
 - Chose: `AGENTS.md` index + 4 rules + 2 project skills; `CLAUDE.md` symlink; `.claude/skills` symlink to `.agents/skills`.
-- Rejected: third-party skills from AutoSkills dry-run (astro, typescript-advanced-types, playwright-best-practices, vitest, oxlint, deploy-to-vercel, frontend-design, accessibility, seo, nodejs-*). Installed `astrolicious/astro`, read it, removed it: generic, inferable, and recommends SSR adapters this static site must not use. Others restate docs or cover tech this repo barely uses (no backend; axe already enforces a11y; 27 small tests).
+- Rejected: third-party skills from AutoSkills dry-run (astro, typescript-advanced-types, playwright-best-practices, vitest, oxlint, deploy-to-vercel, frontend-design, accessibility, seo, nodejs-*). Installed `astrolicious/astro`, read it, removed it: generic, inferable, and recommends SSR adapters this static site must not use. Others restate docs or cover tech this repo barely uses (no backend; axe already enforces a11y).
 - Rejected: `.agents/references/`. No material is large enough to justify a separate load tier.
 - Could not read the Conar `tamery` branch (404); structure follows the task brief.
 
@@ -30,3 +30,11 @@ Newest first. Rules in `.agents/rules/` hold current truth; this file holds why,
 ## 2026-10-28 Node 24, TypeScript 6
 
 - Astro 7 requires Node ≥22.23.4 (Vercel's 22.x is older); `astro check` rejects TypeScript 7.
+
+## 2026-10-28 · Test architecture
+
+- Adopted: typed `test.extend()` fixtures for e2e (`site`, `storedTheme` options, `home`, automatic `errors`). Replaced the `pageerror` handler that threw inside an event listener; it did not reliably fail the test and ignored `console.error`.
+- Adopted: injected `fetch` doubles over `vi.mock`; `github.ts` is parsed at the boundary and attributes every failure to `repo#number`.
+- Found by the audit and fixed: `pnpm ledger:refresh` could not start under Node (`import { type X } from './locale'` keeps a bare import); an unexpected GitHub 200 body was read as `closed`; the theme script left `data-theme` unset when `localStorage` threw.
+- Rejected: video capture, global `retries` locally, a `vi.mock`-based fetch, per-test page objects (one page, no navigation graph to model).
+- Not done: `parseLedger` still accepts `..` as a repo name, impossible ISO dates, empty `repos` and duplicate repos. The data is repo-authored; revisit if the ledger ever takes outside input.

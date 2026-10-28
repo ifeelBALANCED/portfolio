@@ -37,6 +37,8 @@ jobs:
           fi
           pnpm test
           pnpm build
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:e2e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/data/ledger.json

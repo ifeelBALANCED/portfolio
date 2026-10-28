@@ -35,4 +35,4 @@ The tools' own bootstrap uses the system Python (3.9 here) and fails; the `uv ve
 - Uncovered code you cannot honestly test: delete it or leave it uncovered; do not write a fake test.
 - Outputs go to `.metrics/` and `target/` (gitignored). Not run in CI: they need local tools.
 
-Baseline (2026-10-28): max CRAP 6.0, no duplicates, mutation score 100% (38/38) on `src/domain/contributions.ts` and `scripts/github.ts`.
+Baseline (2026-10-28): max CRAP 6.0, no duplicates, mutation score 98.8% (158/160) over `src/domain` and `scripts/github.ts`; the 2 survivors are the accepted `themes.ts` ones above.
