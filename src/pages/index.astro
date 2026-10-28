@@ -1,0 +1,100 @@
+---
+import Base from '../layouts/Base.astro';
+import { profile, experience, stack, education, projects } from '../data/profile';
+import { contributions, snapshot } from '../data/contributions';
+---
+<Base>
+  <div class="wrap">
+    <nav aria-label="Primary">
+      <a href="/">v.herasymenko</a>
+      <ul>
+        <li><a href="#open-source">Open source</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#stack">Stack</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <main id="main">
+      <header class="hero">
+        <span class="label">{profile.role} · {profile.stackLine}</span>
+        <h1>Vladyslav<br /><em>Herasymenko</em></h1>
+        <p class="lead">{profile.summary}</p>
+        <div class="cta">
+          <a class="btn primary" href={`mailto:${profile.email}`}>Get in touch</a>
+          <a class="btn" href="/Vladyslav_Herasymenko_CV.pdf">Download CV (PDF)</a>
+          <a class="btn" href={profile.github} rel="me">GitHub</a>
+        </div>
+        <div class="meta"><span>{profile.location}</span><span>{profile.timezone}</span><span>Remote</span></div>
+      </header>
+
+      <section id="open-source" aria-labelledby="oss-h">
+        <div class="sec-head">
+          <span class="label">01 · Open source</span>
+          <h2 id="oss-h">A public <em>ledger</em> of pull requests</h2>
+          <p>Every row links to the real PR. Status is as of {snapshot}; closed means closed without merging, and I list those too.</p>
+        </div>
+        <div class="ledger">
+          {contributions.map((c) => (
+            <div class="repo">
+              <h3>{c.repo}</h3>
+              <span class="label">{c.stack}</span>
+              {c.items.map((i) => (
+                <div class="pr">
+                  <span class={`chip ${i.status}`}>{i.status}</span>
+                  <div>
+                    <a class="t" href={`https://github.com/${c.repo}/pull/${i.n}`}>#{i.n} {i.title}</a>
+                    <p>{i.note}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="experience" aria-labelledby="exp-h">
+        <div class="sec-head">
+          <span class="label">02 · Experience</span>
+          <h2 id="exp-h">Five years, <em>three</em> domains</h2>
+        </div>
+        {experience.map((j) => (
+          <article class="job">
+            <div><span class="label">{j.period}</span><div class="org">{j.org} · {j.place}</div></div>
+            <div><h3>{j.role}</h3><ul>{j.points.map((p) => <li>{p}</li>)}</ul></div>
+          </article>
+        ))}
+        <article class="job">
+          <div><span class="label">{education.period}</span></div>
+          <div><h3>{education.school}</h3><p style="margin:6px 0 0">{education.degree}</p></div>
+        </article>
+      </section>
+
+      <section id="stack" aria-labelledby="stack-h">
+        <div class="sec-head"><span class="label">03 · Stack</span><h2 id="stack-h">What I <em>build</em> with</h2></div>
+        <div class="stack">
+          {stack.map((s) => (<div><span class="label">{s.group}</span><ul>{s.items.map((i) => <li>{i}</li>)}</ul></div>))}
+        </div>
+      </section>
+
+      <section id="projects" aria-labelledby="proj-h">
+        <div class="sec-head"><span class="label">04 · Own repositories</span><h2 id="proj-h">Selected <em>templates</em> &amp; apps</h2>
+          <p>Public, personal-time projects. Employer code is private and not listed.</p></div>
+        <div class="projects">
+          {projects.map((p) => (
+            <a class="proj" href={p.href}><span class="label">★ {p.stars} · {p.lang}</span><b>{p.name}</b><span>{p.desc}</span></a>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact">
+      <p class="big">Open to a remote <em>Senior Frontend</em> role.</p>
+      <div class="meta">
+        <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        <a href={profile.linkedin} rel="me">LinkedIn</a>
+        <a href={profile.github} rel="me">GitHub</a>
+      </div>
+    </footer>
+  </div>
+</Base>

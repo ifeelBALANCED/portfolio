@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://vladyslav-herasymenko.vercel.app/sitemap.xml
