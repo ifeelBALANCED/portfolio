@@ -21,6 +21,16 @@ const valid = {
   ],
 };
 
+const pr = (override: Record<string, unknown>) => ({
+  ...valid,
+  repos: [
+    {
+      ...valid.repos[0],
+      pullRequests: [{ number: 1, title: 't', status: 'open', note: 'n', ...override }],
+    },
+  ],
+});
+
 describe('pullRequestUrl', () => {
   it('links to the pull request on GitHub', () => {
     expect(pullRequestUrl('TanStack/db', 1745)).toBe('https://github.com/TanStack/db/pull/1745');
@@ -56,8 +66,31 @@ describe('parseLedger', () => {
     expect(() => parseLedger({ ...valid, snapshot: 'yesterday' })).toThrow(/snapshot/);
   });
 
-  it('rejects non-object input', () => {
-    expect(() => parseLedger(null)).toThrow();
+  it.each([
+    ['a repo entry that is not an object', { ...valid, repos: ['x'] }],
+    [
+      'a repo without pull requests',
+      { ...valid, repos: [{ ...valid.repos[0], pullRequests: [] }] },
+    ],
+    ['repos that are not an array', { ...valid, repos: {} }],
+    [
+      'a pull request that is not an object',
+      { ...valid, repos: [{ ...valid.repos[0], pullRequests: [1] }] },
+    ],
+    ['a non-integer pull request number', pr({ number: 1.5 })],
+    ['a zero pull request number', pr({ number: 0 })],
+    ['an empty title', pr({ title: '' })],
+    ['a missing note', pr({ note: undefined })],
+  ])('rejects %s', (_label, input) => {
+    expect(() => parseLedger(input)).toThrow(/Invalid ledger/);
+  });
+
+  it.each([[null], [[]], ['text'], [42]])('rejects %j as the whole ledger', (input) => {
+    expect(() => parseLedger(input)).toThrow(/Invalid ledger/);
+  });
+
+  it('accepts pull request number 1', () => {
+    expect(parseLedger(pr({ number: 1 })).repos[0]?.pullRequests[0]?.number).toBe(1);
   });
 });
 

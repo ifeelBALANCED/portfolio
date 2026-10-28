@@ -34,9 +34,11 @@ const text = (value: unknown, field: string): string =>
     ? value
     : fail(`${field} must be a non-empty string`);
 
+const isStatus = (value: unknown): value is PullRequestStatus =>
+  STATUSES.some((status) => status === value);
+
 const parseStatus = (value: unknown): PullRequestStatus =>
-  STATUSES.find((status) => status === value) ??
-  fail(`status must be one of ${STATUSES.join(', ')}`);
+  isStatus(value) ? value : fail(`status must be one of ${STATUSES.join(', ')}`);
 
 const parsePullRequest = (value: unknown): PullRequest => {
   if (!isRecord(value)) return fail('pull request must be an object');
@@ -103,8 +105,9 @@ export const applyStatuses = (
   const repos = ledger.repos.map((repo) => ({
     ...repo,
     pullRequests: repo.pullRequests.map((pr) => {
-      const status = states.get(`${repo.repo}#${pr.number}`) ?? pr.status;
-      if (status !== pr.status) changed = true;
+      const status = states.get(`${repo.repo}#${pr.number}`);
+      if (status === undefined || status === pr.status) return pr;
+      changed = true;
       return { ...pr, status };
     }),
   }));
