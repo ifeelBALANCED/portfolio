@@ -59,7 +59,7 @@ export const en = {
   inventory: {
     title: 'Inventory',
     intro: 'Public, personal-time projects. Employer code is private and not listed.',
-    code: 'code',
+    featured: 'Featured · most starred',
     demo: 'live demo',
     live: 'Live',
   },

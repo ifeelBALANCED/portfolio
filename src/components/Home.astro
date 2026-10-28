@@ -17,6 +17,7 @@ const copy = t(locale);
 const build = new Date().toISOString().slice(0, 10);
 const spec = copy.hero.spec;
 const specRows = [spec.focus, spec.stack, spec.experience, spec.base];
+const pinnedFirst = [...projects].sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false));
 ---
 <Base locale={locale}>
   <Toolbar locale={locale} />
@@ -83,16 +84,23 @@ const specRows = [spec.focus, spec.stack, spec.experience, spec.base];
         <p class="sec-lede">{copy.inventory.intro}</p>
       </SectionHead>
       <ul class="inventory">
-        {projects.map((project) => (
-          <li>
-            <p class="inv-name">{project.name}{project.demo && <span class="pill mono">{copy.inventory.live}</span>}</p>
+        {pinnedFirst.map((project) => (
+          <li class="repo" data-featured={project.featured ? '' : undefined}>
+            <div class="inv-head">
+              {project.featured && <p class="inv-kicker mono caps">{copy.inventory.featured}</p>}
+              <p class="inv-name">
+                <a href={project.href}>{project.name}&nbsp;↗</a>
+                {project.demo && <span class="pill mono">{copy.inventory.live}</span>}
+              </p>
+            </div>
             <p class="inv-desc">{project.desc[locale]}</p>
             <div class="inv-meta">
               <p class="mono text-muted">{project.lang} · ★ {project.stars}</p>
-              <p class="inv-links mono">
-                <a href={project.href}>{copy.inventory.code} ↗</a>
-                {project.demo && <a href={project.demo}>{copy.inventory.demo} ↗</a>}
-              </p>
+              {project.demo && (
+                <p class="inv-links mono">
+                  <a class={project.featured ? 'btn' : undefined} href={project.demo}>{copy.inventory.demo} ↗</a>
+                </p>
+              )}
             </div>
           </li>
         ))}

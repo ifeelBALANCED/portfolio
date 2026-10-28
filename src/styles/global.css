@@ -845,9 +845,8 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    border-top: 1px solid var(--line);
   }
-  .inventory li {
+  .repo {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.5rem 2rem;
@@ -859,11 +858,18 @@
     font-weight: 600;
     overflow-wrap: anywhere;
   }
+  .inv-name a {
+    text-decoration-thickness: 1px;
+  }
+  .inv-desc {
+    min-width: 0;
+  }
   .inv-links {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem 1rem;
     align-items: center;
+    margin-top: 0.25rem;
   }
   .pill {
     display: inline-block;
@@ -874,11 +880,42 @@
     margin-left: 0.5rem;
     vertical-align: middle;
   }
+  /* The pinned repo reuses the ledger's vocabulary: surface window, state bar on the left. */
+  .repo[data-featured] {
+    position: relative;
+    padding: 1.5rem 1.25rem 1.5rem 1.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 0.5rem;
+    overflow: clip;
+  }
+  .repo[data-featured]::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--accent);
+  }
+  .repo[data-featured] .inv-name {
+    font-size: clamp(1.5rem, 1rem + 1.6vw, 2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .repo[data-featured] .inv-desc {
+    font-size: 1.0625rem;
+    max-width: 56ch;
+  }
+  .inv-kicker {
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
   @media (min-width: 1024px) {
-    .inventory li {
+    .repo {
       grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: baseline;
     }
-    .inv-name {
+    .inv-head {
       grid-column: 1 / span 4;
     }
     .inv-desc {
@@ -886,6 +923,26 @@
     }
     .inv-meta {
       grid-column: 10 / span 3;
+    }
+    .repo[data-featured] {
+      align-items: center;
+    }
+    .repo[data-featured] .inv-head {
+      grid-column: 1 / span 6;
+    }
+    .repo[data-featured] .inv-desc {
+      grid-column: 1 / span 6;
+      grid-row: 2;
+    }
+    .repo[data-featured] .inv-meta {
+      grid-column: 8 / span 5;
+      grid-row: 1 / span 2;
+      justify-self: end;
+      text-align: right;
+    }
+    .repo[data-featured] .inv-links {
+      justify-content: flex-end;
+      margin-top: 0.75rem;
     }
   }
 

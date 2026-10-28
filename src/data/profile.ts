@@ -164,6 +164,8 @@ export interface Project {
   readonly desc: Localized<string>;
   readonly href: string;
   readonly demo?: string;
+  /** At most one: shown as a highlighted card above the rest. */
+  readonly featured?: true;
 }
 
 export const projects: readonly Project[] = [
@@ -172,11 +174,12 @@ export const projects: readonly Project[] = [
     stars: 21,
     lang: 'TypeScript',
     desc: {
-      en: 'Dockerized React + Effector + Feature-Sliced Design + Vite starter. My most-starred repository.',
-      uk: 'Dockerized-стартер: React + Effector + Feature-Sliced Design + Vite. Мій найпопулярніший репозиторій.',
+      en: 'Dockerized React + Effector + Feature-Sliced Design + Vite starter.',
+      uk: 'Dockerized-стартер: React + Effector + Feature-Sliced Design + Vite.',
     },
     href: 'https://github.com/ifeelBALANCED/effector-vite-template',
     demo: 'https://effector-vite-template.surge.sh',
+    featured: true,
   },
   {
     name: 'nest-react-monorepo',

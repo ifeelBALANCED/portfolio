@@ -77,6 +77,16 @@ for (const locale of LOCALES) {
       );
     });
 
+    test('the featured repo comes first and carries the live demo', async ({ page }) => {
+      await page.goto(locale.path);
+      const first = page.locator('.inventory > li').first();
+      await expect(first).toHaveAttribute('data-featured', '');
+      await expect(first.locator('a[href^="https://effector-vite-template.surge.sh"]')).toHaveCount(
+        1,
+      );
+      await expect(page.locator('.inventory > li[data-featured]')).toHaveCount(1);
+    });
+
     test('skip link is the first tab stop and focus is visible', async ({ page }) => {
       await page.goto(locale.path);
       await page.keyboard.press('Tab');
