@@ -312,6 +312,9 @@ test('production sends the security headers', { tag: '@smoke' }, async ({ reques
     'headers come from vercel.json; astro preview does not apply them',
   );
   const headers = (await request.get('/')).headers();
+  const duplicate = await request.get('/uk/index.html', { maxRedirects: 0 });
+  expect([307, 308]).toContain(duplicate.status());
+  expect(duplicate.headers().location).toBe('/uk/');
   expect(headers['content-security-policy']).toContain("default-src 'none'");
   expect(headers['content-security-policy']).toMatch(/script-src ('sha256-[\w+/=]+' ?)+;/);
   expect(headers['permissions-policy']).toContain('camera=()');
