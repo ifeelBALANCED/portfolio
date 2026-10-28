@@ -1,12 +1,21 @@
 {
   "name": "portfolio",
-  "type": "module",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview"
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint": "oxlint",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm knip && pnpm test && pnpm build && pnpm test:e2e",
+    "ledger:refresh": "node scripts/refresh-ledger.ts",
+    "knip": "knip"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
@@ -15,7 +24,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
-    "typescript": "^6.0.3"
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
+    "knip": "^6.43.0",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
   },
   "engines": {
     "node": "24.x"

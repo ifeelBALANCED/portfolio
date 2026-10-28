@@ -1,7 +1,37 @@
 # portfolio
 
-Personal site for Vladyslav Herasymenko. Astro 7, static output, zero client JS.
+Personal site for Vladyslav Herasymenko. Astro 7, static output, no client JavaScript.
+Live: https://vladyslav-herasymenko.vercel.app
 
+## Develop
+
+Requires Node 24 and pnpm.
+
+```sh
+pnpm install
+pnpm dev            # http://localhost:4321
 ```
-pnpm install && pnpm build   # needs Node 24.x
-```
+
+## Quality gates
+
+| Command             | Checks                                         |
+| ------------------- | ---------------------------------------------- |
+| `pnpm check`        | `astro check` (strict TypeScript)              |
+| `pnpm lint`         | Oxlint                                         |
+| `pnpm format:check` | Oxfmt (`pnpm format` to fix)                   |
+| `pnpm knip`         | Unused files, exports and dependencies         |
+| `pnpm test`         | Vitest unit tests (domain logic)               |
+| `pnpm test:e2e`     | Playwright + axe (WCAG 2.2 AA), desktop+mobile |
+| `pnpm verify`       | All of the above plus the production build     |
+
+## CI/CD
+
+- **CI** (`.github/workflows/ci.yml`): every push and PR runs types, lint, format, knip, unit tests, build and e2e.
+- **Deploy**: Vercel's Git integration builds and deploys every push to `main`.
+- **Production smoke** (`production-smoke.yml`): after a production deploy succeeds, e2e runs against the live URL.
+- **Ledger refresh** (`refresh-ledger.yml`): weekly, re-reads PR states from GitHub, verifies tests and build, commits `src/data/ledger.json`, which triggers a redeploy. Run locally with `pnpm ledger:refresh`.
+- **Dependabot** keeps npm packages and Actions current.
+
+## Content
+
+Experience comes from the CV. Open-source rows live in `src/data/ledger.json` and are validated at build time by `src/domain/contributions.ts`.
