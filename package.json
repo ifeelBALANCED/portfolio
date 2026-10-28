@@ -13,12 +13,15 @@
     "format:check": "oxfmt --check .",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm knip && pnpm test && pnpm build && pnpm test:e2e",
+    "verify": "pnpm check && pnpm lint && pnpm format:check && pnpm knip && pnpm test:coverage && pnpm build && pnpm csp:check && pnpm test:e2e",
     "ledger:refresh": "node scripts/refresh-ledger.ts",
     "knip": "knip",
     "ub:crap": "${UB_TOOLS:-$HOME/tools/ub}/crapper/crapper src scripts",
     "ub:dry": "${UB_TOOLS:-$HOME/tools/ub}/dryer/dryer src scripts",
-    "ub:mutate": "${UB_TOOLS:-$HOME/tools/ub}/mutator/mutator src/domain scripts/github.ts"
+    "ub:mutate": "${UB_TOOLS:-$HOME/tools/ub}/mutator/mutator src/domain scripts/github.ts",
+    "csp:check": "node scripts/csp.ts",
+    "csp:sync": "node scripts/csp.ts --write",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
@@ -30,7 +33,7 @@
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^26.6.5",
+    "@types/node": "^24.19.2",
     "@vitest/coverage-v8": "^5.0.5",
     "knip": "^6.43.0",
     "oxfmt": "^0.75.0",

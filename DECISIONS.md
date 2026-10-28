@@ -38,3 +38,11 @@ Newest first. Rules in `.agents/rules/` hold current truth; this file holds why,
 - Found by the audit and fixed: `pnpm ledger:refresh` could not start under Node (`import { type X } from './locale'` keeps a bare import); an unexpected GitHub 200 body was read as `closed`; the theme script left `data-theme` unset when `localStorage` threw.
 - Rejected: video capture, global `retries` locally, a `vi.mock`-based fetch, per-test page objects (one page, no navigation graph to model).
 - Not done: `parseLedger` still accepts `..` as a repo name, impossible ISO dates, empty `repos` and duplicate repos. The data is repo-authored; revisit if the ledger ever takes outside input.
+
+## 2026-10-28 · Audit follow-up
+
+- Adopted: inline all CSS (`inlineStylesheets: 'always'`): one render-blocking request removed, first paint 568 to 324 ms on a throttled mobile profile; cost ~9 KB per HTML.
+- Adopted: hash-based CSP generated from `dist` (`pnpm csp:sync`), `style-src 'unsafe-inline'` because of inline CSS and style attributes. A real-browser load found Vite's `data:` font and forced `font-src data:`.
+- Adopted: contact CTA first in the hero, availability row, 404 page, per-locale share image, Actions pinned by SHA.
+- Corrected, ledger: five notes overclaimed against the PRs (TanStack #1745 "200k differential fuzz", #1746/#1747/#1748 "Fixes #...", oxc #25844 "auto-fix"). Rewritten from the PR bodies and maintainer comments.
+- Rejected: adding "Senior" to the hero (the owner asked for plain "Frontend engineer"); hiding the theme picker without JS (it works through CSS, verified by test); obfuscating the mailto (hurts the one action a recruiter takes); llms.txt, lastmod, JSON-LD expansion (no measurable gain).

@@ -4,7 +4,11 @@ Read before committing, and when adding tests, CI or dependencies.
 
 ## Gates (`pnpm verify` runs all)
 
-`check` (astro check) → `lint` (oxlint) → `format:check` (oxfmt) → `knip` → `test` (vitest) → `build` → `test:e2e` (playwright + axe, desktop + mobile projects). CI (`.github/workflows/ci.yml`) runs the same.
+`check` (astro check) → `lint` (oxlint) → `format:check` (oxfmt) → `knip` → `test:coverage` (vitest, 100% floor) → `build` → `csp:check` → `test:e2e` (playwright + axe, desktop + mobile projects). CI (`.github/workflows/ci.yml`) runs the same.
+
+## Headers and CSP
+
+`vercel.json` carries the security headers, including a Content-Security-Policy whose `script-src` lists the SHA-256 of every inline script in `dist`. Change an inline script (theme script, toolbar script) and `pnpm csp:check` fails until `pnpm csp:sync` rewrites the policy; commit `vercel.json` with the change. `astro preview` does not apply these headers: a CSP mistake only shows on the live URL, where the `@smoke` header test and the `errors` fixture (CSP violations log `console.error`) catch it. Vite inlines small fonts as `data:` URIs, hence `font-src 'self' data:`.
 
 ## Testing
 
