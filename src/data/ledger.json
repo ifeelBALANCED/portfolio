@@ -10,8 +10,8 @@
           "title": "Prevent ReDoS in like()/ilike() matching",
           "status": "merged",
           "note": {
-            "en": "Replaced backtracking pattern matching with an iterative two-pointer matcher; checked against the old one with a 200k-case differential fuzz.",
-            "uk": "Замінив backtracking-зіставлення шаблонів на ітеративний two-pointer matcher; звірив зі старим через диференційний fuzz на 200 тис. випадків."
+            "en": "Replaced backtracking LIKE matching with an iterative two-pointer matcher; verified with two 10,000-case oracle campaigns.",
+            "uk": "Замінив backtracking-зіставлення LIKE на ітеративний two-pointer matcher; перевірив двома oracle-кампаніями по 10 тис. випадків."
           }
         },
         {
@@ -19,8 +19,8 @@
           "title": "Drive inner joins from a correlation-bounded lazy side inside includes",
           "status": "closed",
           "note": {
-            "en": "Fixes #1709: 289 ms to 1 ms on a 200k-row case.",
-            "uk": "Виправляє #1709: з 289 мс до 1 мс на випадку з 200 тис. рядків."
+            "en": "Closed as superseded: a maintainer's rewrite (#1740) fixed #1709; my fix measured 289 ms to 1 ms on 200k rows.",
+            "uk": "Закрито як замінений: #1709 виправив рерайт від мейнтейнера (#1740); мій фікс давав 289 мс → 1 мс на 200 тис. рядків."
           }
         },
         {
@@ -28,8 +28,8 @@
           "title": "Serve joins on a collection primary key via an implicit key index",
           "status": "closed",
           "note": {
-            "en": "Fixes #1708: derives a synthetic index from getKey instead of requiring a manual one.",
-            "uk": "Виправляє #1708: виводить синтетичний індекс із getKey замість ручного."
+            "en": "Not merged: maintainers kept explicit createIndex for #1708 and found a getKey inference edge case.",
+            "uk": "Не змерджено: мейнтейнери залишили явний createIndex для #1708 і знайшли крайній випадок з виведенням getKey."
           }
         },
         {
@@ -37,8 +37,8 @@
           "title": "Support nested optional property access in SingleRowRefProxy",
           "status": "closed",
           "note": {
-            "en": "Fixes #1726: row.updatedAt?.seconds now type-checks in where/createIndex callbacks.",
-            "uk": "Виправляє #1726: row.updatedAt?.seconds тепер проходить перевірку типів у колбеках where/createIndex."
+            "en": "Superseded by the maintainers' #1850, which fixed #1726; they credited the diagnosis and the type-test direction.",
+            "uk": "Замінений #1850 від мейнтейнерів, який виправив #1726; вони відзначили діагноз і напрям type-тестів."
           }
         }
       ]
@@ -61,8 +61,8 @@
           "title": "linter/vue: no-deprecated-dollar-scopedslots-api",
           "status": "open",
           "note": {
-            "en": "Includes an auto-fix that rewrites $scopedSlots to $slots.",
-            "uk": "Містить автофікс, що переписує $scopedSlots на $slots."
+            "en": "Includes a suggestion fix that rewrites $scopedSlots to $slots.",
+            "uk": "Містить suggestion-фікс, що переписує $scopedSlots на $slots."
           }
         },
         {
@@ -94,8 +94,8 @@
           "title": "git_ui: Resolve merge conflicts from the keyboard",
           "status": "open",
           "note": {
-            "en": "Keyboard-driven conflict resolution in the git panel.",
-            "uk": "Розв’язання конфліктів злиття з клавіатури в git-панелі."
+            "en": "Keyboard-driven merge-conflict resolution in the editor, with remaining-conflict progress in the git panel.",
+            "uk": "Розв’язання конфліктів злиття з клавіатури в редакторі, з прогресом у git-панелі."
           }
         },
         {

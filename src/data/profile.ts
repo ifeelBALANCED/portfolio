@@ -22,7 +22,7 @@ export const experience: readonly Job[] = [
   {
     start: '04.2023',
     end: null,
-    role: { en: 'Frontend Developer', uk: 'Frontend-розробник' },
+    role: { en: 'Frontend Developer', uk: 'Фронтенд-розробник' },
     org: { en: 'SE “Infotech”', uk: 'SE “Infotech”' },
     place: { en: 'Kyiv', uk: 'Київ' },
     points: {
@@ -45,7 +45,7 @@ export const experience: readonly Job[] = [
   {
     start: '08.2022',
     end: '03.2023',
-    role: { en: 'Frontend Developer', uk: 'Frontend-розробник' },
+    role: { en: 'Frontend Developer', uk: 'Фронтенд-розробник' },
     org: { en: 'Unit Space', uk: 'Unit Space' },
     place: { en: 'Kharkiv', uk: 'Харків' },
     points: {
@@ -66,7 +66,7 @@ export const experience: readonly Job[] = [
   {
     start: '05.2021',
     end: '07.2022',
-    role: { en: 'Frontend Developer', uk: 'Frontend-розробник' },
+    role: { en: 'Frontend Developer', uk: 'Фронтенд-розробник' },
     org: { en: 'Zfort Group', uk: 'Zfort Group' },
     place: { en: 'Kharkiv', uk: 'Харків' },
     points: {
@@ -77,26 +77,26 @@ export const experience: readonly Job[] = [
       ],
       uk: [
         'Створював візуалізації аналітичних дашбордів на Recharts, Chart.js і react-charts.',
-        'Інтегрував frontend з кількома бекенд-сервісами та базами даних.',
-        'Робив адаптивні кросбраузерні інтерфейси за дизайн-специфікаціями; рев’ювив код колег і пропонував покращення інструментів.',
+        'Інтегрував фронтенд з кількома бекенд-сервісами та базами даних.',
+        'Робив адаптивні кросбраузерні інтерфейси за дизайн-специфікаціями; переглядав код колег і пропонував покращення інструментів.',
       ],
     },
   },
   {
     start: '09.2020',
     end: '04.2021',
-    role: { en: 'Freelance Frontend Developer', uk: 'Фріланс frontend-розробник' },
+    role: { en: 'Freelance Frontend Developer', uk: 'Фронтенд-розробник (фріланс)' },
     org: { en: 'Private clients', uk: 'Приватні клієнти' },
     place: { en: 'Remote', uk: 'Віддалено' },
     points: {
       en: ['Delivered frontend development projects for private clients.'],
-      uk: ['Виконував frontend-проєкти для приватних клієнтів.'],
+      uk: ['Виконував фронтенд-проєкти для приватних клієнтів.'],
     },
   },
   {
     start: '05.2019',
     end: '08.2020',
-    role: { en: 'Frontend Developer', uk: 'Frontend-розробник' },
+    role: { en: 'Frontend Developer', uk: 'Фронтенд-розробник' },
     org: { en: 'KE Development', uk: 'KE Development' },
     place: { en: 'Kharkiv', uk: 'Харків' },
     points: {
@@ -105,7 +105,7 @@ export const experience: readonly Job[] = [
         'Wrote tested code, conducted code reviews, took part in architecture planning with backend and UX/UI teams.',
       ],
       uk: [
-        'Втілював UI-дизайни на JavaScript і CSS; випускав фічі та виправляв баги.',
+        'Реалізовував UI-дизайни на JavaScript і CSS; випускав фічі та виправляв баги.',
         'Писав протестований код, проводив код-рев’ю, брав участь в архітектурному плануванні з бекенд- та UX/UI-командами.',
       ],
     },
@@ -175,7 +175,7 @@ export const projects: readonly Project[] = [
     lang: 'TypeScript',
     desc: {
       en: 'Dockerized React + Effector + Feature-Sliced Design + Vite starter.',
-      uk: 'Dockerized-стартер: React + Effector + Feature-Sliced Design + Vite.',
+      uk: 'Стартер у Docker: React + Effector + Feature-Sliced Design + Vite.',
     },
     href: 'https://github.com/ifeelBALANCED/effector-vite-template',
     demo: 'https://effector-vite-template.surge.sh',

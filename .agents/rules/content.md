@@ -3,7 +3,7 @@
 Read when adding or editing text, numbers, links, contact details or PR rows.
 
 - Experience, education and skills come only from the CV PDF. A claim not in the CV or live GitHub does not go on the site.
-- Ledger rows list PRs by their real GitHub state, including closed-unmerged ones. Do not hide or reword closed PRs as wins. Notes may state only what the PR itself claims (e.g. the `289 ms to 1 ms` figure is from the PR description).
+- Ledger rows list PRs by their real GitHub state, including closed-unmerged ones. Do not hide or reword closed PRs as wins. Notes state outcomes, not hopes: never "Fixes #n" or implied adoption unless a maintainer said so. Verify against the PR body, its comments and the linked issue (`gh api repos/<repo>/pulls/<n>`, `.../issues/<n>/comments`) before writing or keeping a note; numbers come from the PR description (e.g. `289 ms to 1 ms`); a suggestion fix is not an auto-fix. Five notes failed this on 2026-10-28 and were rewritten.
 - Employer code is private: list only public repositories.
 - Never mention the war, blackouts or connectivity risk. Location (Kyiv) and timezone (UTC+2/+3) only. Why: owner vetoed it for job applications; same policy here.
 - Public contact is the CV email, GitHub and LinkedIn. Never publish the phone number. The LinkedIn URL is unverified (inferred from the CV); flag it if asked about contact accuracy.
