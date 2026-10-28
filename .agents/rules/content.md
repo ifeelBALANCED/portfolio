@@ -9,4 +9,4 @@ Read when adding or editing text, numbers, links, contact details or PR rows.
 - Public contact is the CV email, GitHub and LinkedIn. Never publish the phone number. The LinkedIn URL is unverified (inferred from the CV); flag it if asked about contact accuracy.
 - Ukrainian text is a translation of the English source: same facts, no additions. The Ukrainian name spelling, the hero lede and the section captions are drafted copy the owner should confirm.
 - Do not list English level (B2): it filters out senior roles.
-- Domain `vladyslav-herasymenko.vercel.app` is hardcoded in `astro.config.mjs`, `public/robots.txt`, `public/sitemap.xml`; change all three together. Add new routes to `sitemap.xml` with their hreflang alternates.
+- The origin lives in one place: `DEFAULT_SITE_URL` in `src/domain/env.ts` (overridable by `SITE_URL`). `robots.txt` and `sitemap.xml` are generated from it in `src/pages`; add new routes to `sitemap.xml.ts` with their hreflang alternates.

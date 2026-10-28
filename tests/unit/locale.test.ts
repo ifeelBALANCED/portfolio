@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_LOCALE,
+  sitemapXml,
   LOCALES,
   alternates,
   isLocale,
@@ -47,5 +48,19 @@ describe('alternates', () => {
       { hreflang: 'uk', href: 'https://example.com/uk/' },
       { hreflang: 'x-default', href: 'https://example.com/' },
     ]);
+  });
+});
+
+describe('sitemapXml', () => {
+  const xml = sitemapXml('https://example.dev');
+
+  it('lists every language edition as a url', () => {
+    expect(xml).toContain('<loc>https://example.dev/</loc>');
+    expect(xml).toContain('<loc>https://example.dev/uk/</loc>');
+  });
+
+  it('gives each url every alternate, including x-default', () => {
+    expect(xml.match(/hreflang="x-default" href="https:\/\/example\.dev\/"/g)).toHaveLength(2);
+    expect(xml.match(/hreflang="uk" href="https:\/\/example\.dev\/uk\/"/g)).toHaveLength(2);
   });
 });

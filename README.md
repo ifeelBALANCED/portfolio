@@ -40,3 +40,7 @@ Experience comes from the CV; every visible string has an `en` and a `uk` value 
 ## Licence
 
 Source code: MIT (`LICENSE`). The text, CV and profile data are not licensed for reuse.
+
+## Environment
+
+All variables are optional; see `.env.example`. `SITE_URL` sets the canonical origin (also used for `robots.txt` and `sitemap.xml`), `GITHUB_TOKEN` raises the API limit for `pnpm ledger:refresh`, `BASE_URL` points Playwright at a deployed site. CI uses the built-in `GITHUB_TOKEN`; add a repository secret `LEDGER_TOKEN` (fine-grained PAT, contents write on this repo) so the weekly ledger push also triggers CI.
