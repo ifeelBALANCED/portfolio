@@ -18,7 +18,7 @@ export const contentSecurityPolicy = (hashes: readonly string[]): string => {
     "default-src 'none'",
     `script-src ${sources.length > 0 ? sources.join(' ') : "'none'"}`,
     "style-src 'unsafe-inline'",
-    "font-src 'self' data:",
+    "font-src 'self'",
     "img-src 'self' data:",
     "manifest-src 'self'",
     "base-uri 'none'",

@@ -44,7 +44,7 @@ describe('contentSecurityPolicy', () => {
     expect(scriptSrc([])).toBe("script-src 'none'");
   });
 
-  // Vite inlines small font files as data: URIs; without it the browser blocks them (found in a real load).
+  // Fonts are emitted as files (assetsInlineLimit 0), so no data: source is allowed for them.
   it('denies everything not listed and forbids framing, forms and base changes', () => {
     const csp = contentSecurityPolicy(['sha256-a']);
     for (const part of [
@@ -52,7 +52,7 @@ describe('contentSecurityPolicy', () => {
       "base-uri 'none'",
       "form-action 'none'",
       "frame-ancestors 'none'",
-      "font-src 'self' data:",
+      "font-src 'self'",
       "img-src 'self' data:",
       "style-src 'unsafe-inline'",
       "manifest-src 'self'",

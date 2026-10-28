@@ -11,5 +11,6 @@ export default defineConfig({
     defaultLocale: 'en',
     routing: { prefixDefaultLocale: false },
   },
-  vite: { plugins: [tailwindcss()] },
+  // No asset is inlined as a data: URI, so the CSP needs no data: source for fonts.
+  vite: { plugins: [tailwindcss()], build: { assetsInlineLimit: 0 } },
 });

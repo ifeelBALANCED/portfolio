@@ -8,7 +8,7 @@ Read before committing, and when adding tests, CI or dependencies.
 
 ## Headers and CSP
 
-`vercel.json` carries the security headers, including a Content-Security-Policy whose `script-src` lists the SHA-256 of every inline script in `dist`. Change an inline script (theme script, toolbar script) and `pnpm csp:check` fails until `pnpm csp:sync` rewrites the policy; commit `vercel.json` with the change. `astro preview` does not apply these headers: a CSP mistake only shows on the live URL, where the `@smoke` header test and the `errors` fixture (CSP violations log `console.error`) catch it. Vite inlines small fonts as `data:` URIs, hence `font-src 'self' data:`.
+`vercel.json` carries the security headers, including a Content-Security-Policy whose `script-src` lists the SHA-256 of every inline script in `dist`. Change an inline script (theme script, toolbar script) and `pnpm csp:check` fails until `pnpm csp:sync` rewrites the policy; commit `vercel.json` with the change. `astro preview` does not apply these headers: a CSP mistake only shows on the live URL, where the `@smoke` header test and the `errors` fixture (CSP violations log `console.error`) catch it. `assetsInlineLimit: 0` keeps fonts as files, so `font-src` is `'self'` only; re-allowing `data:` means a font was inlined again.
 
 ## Testing
 
