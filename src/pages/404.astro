@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import { localizedPath } from '../domain/locale';
+import { t } from '../i18n';
+
+const en = t('en');
+const uk = t('uk');
+---
+<Base locale="en" title={`404 · ${en.notFound.title} · ${uk.notFound.title}`} noindex>
+  <main id="main" class="lost">
+    <p class="mono caps text-muted">404</p>
+    <h1 class="display">{en.notFound.title}</h1>
+    <p class="lede" lang="en">{en.notFound.text}</p>
+    <p class="lede" lang="uk">{uk.notFound.title}. {uk.notFound.text}</p>
+    <p class="actions">
+      <a class="btn" href={localizedPath('en')} hreflang="en" lang="en">{en.notFound.home}</a>
+      <a class="btn" href={localizedPath('uk')} hreflang="uk" lang="uk">{uk.notFound.home}</a>
+    </p>
+  </main>
+</Base>

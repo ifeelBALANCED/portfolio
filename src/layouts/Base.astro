@@ -11,13 +11,15 @@ import { t } from '../i18n';
 
 interface Props {
   locale: Locale;
+  title?: string;
+  noindex?: boolean;
 }
 
-const { locale } = Astro.props;
+const { locale, title = t(locale).meta.title, noindex = false } = Astro.props;
 const copy = t(locale);
 const origin = Astro.site?.origin ?? '';
 const url = new URL(localizedPath(locale), Astro.site);
-const image = new URL('/og.png', Astro.site);
+const image = new URL(copy.meta.ogImage, Astro.site);
 const fonts = locale === 'uk' ? [onestLatin, onestCyrillic, monoLatin, monoCyrillic] : [onestLatin, monoLatin];
 const known = JSON.stringify(THEMES.map((theme) => theme.id));
 const themeScript = `var t=null;try{t=localStorage.getItem('vh-theme')}catch(e){}if(${known}.indexOf(t)<0)t=matchMedia('(prefers-color-scheme:dark)').matches?'graphite':'paper';document.documentElement.dataset.theme=t`;
@@ -27,15 +29,18 @@ const themeScript = `var t=null;try{t=localStorage.getItem('vh-theme')}catch(e){
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{copy.meta.title}</title>
+    <title>{title}</title>
     <meta name="description" content={copy.meta.description} />
-    <link rel="canonical" href={url} />
-    {alternates(origin).map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+    {noindex && <meta name="robots" content="noindex" />}
+    {!noindex && <link rel="canonical" href={url} />}
+    {!noindex && alternates(origin).map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#101214" media="(prefers-color-scheme: dark)" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={copy.meta.title} />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content={copy.meta.description} />
     <meta property="og:url" content={url} />
     <meta property="og:image" content={image} />

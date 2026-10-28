@@ -266,6 +266,26 @@
     outline-offset: 4px;
   }
 
+  /* Windows High Contrast drops gradients and shadows: keep the swatches and the selected states legible. */
+  @media (forced-colors: active) {
+    .swatch {
+      forced-color-adjust: none;
+    }
+    .theme-pick input:checked + .swatch {
+      box-shadow: none;
+      outline: 3px solid Highlight;
+      outline-offset: 2px;
+    }
+    .filter label:has(input:checked) {
+      forced-color-adjust: none;
+      background: Highlight;
+      color: HighlightText;
+    }
+    .btn {
+      border: 2px solid ButtonText;
+    }
+  }
+
   /* ── section heads with ruler ticks ───────── */
   .sec {
     padding-inline: var(--pad);
@@ -971,15 +991,18 @@
   .end {
     padding: 4rem var(--pad) 3rem;
   }
+  .lost {
+    padding: 6rem var(--pad) 4rem;
+    min-height: 70dvh;
+  }
+  .lost .display {
+    font-size: clamp(2.5rem, 1.5rem + 5vw, 5rem);
+  }
   .end-links {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1.25rem;
     margin-top: 1.5rem;
-  }
-  .end-mark {
-    margin-top: 2rem;
-    color: var(--muted);
   }
 }
 

@@ -9,6 +9,8 @@ interface Options {
   site: Locale;
   /** Value planted in `vh-theme` before the first navigation, as a returning visitor would have. */
   storedTheme: string | null;
+  /** Console errors a test knowingly provokes, e.g. the 404 status of a deliberate bad address. */
+  expectedErrors: RegExp[];
 }
 
 interface Fixtures {
@@ -21,6 +23,7 @@ interface Fixtures {
 export const test = base.extend<Options & Fixtures>({
   site: ['en', { option: true }],
   storedTheme: [null, { option: true }],
+  expectedErrors: [[], { option: true }],
 
   page: async ({ page, storedTheme }, use) => {
     if (storedTheme !== null) {
@@ -30,14 +33,17 @@ export const test = base.extend<Options & Fixtures>({
   },
 
   errors: [
-    async ({ page }, use) => {
+    async ({ page, expectedErrors }, use) => {
       const errors: string[] = [];
       page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
       page.on('console', (message) => {
         if (message.type() === 'error') errors.push(`console: ${message.text()}`);
       });
       await use(errors);
-      expect(errors, 'the page must not log errors').toEqual([]);
+      const unexpected = errors.filter(
+        (error) => !expectedErrors.some((known) => known.test(error)),
+      );
+      expect(unexpected, 'the page must not log errors').toEqual([]);
     },
     { auto: true },
   ],

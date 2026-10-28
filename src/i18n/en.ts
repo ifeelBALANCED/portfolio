@@ -4,6 +4,7 @@ export const en = {
     description:
       'Frontend engineer (React / TypeScript) in Kyiv. 5+ years across GIS, fintech and analytics; merged TanStack DB contributor; Rust linter work in Oxc.',
     ogLocale: 'en_US',
+    ogImage: '/og.png',
   },
   skip: 'Skip to content',
   toolbar: { brand: 'VH / FRONTEND ENGINEER' },
@@ -27,7 +28,9 @@ export const en = {
       stack: { label: 'Stack', value: 'React · TypeScript' },
       experience: { label: 'Experience', value: '5+ yrs' },
       base: { label: 'Base', value: 'Kyiv' },
+      status: { label: 'Status', value: 'Open to remote frontend roles' },
     },
+    contact: 'Contact me',
     seePrs: 'See the PRs',
     github: 'GitHub',
     cv: 'Download CV (PDF)',
@@ -68,7 +71,11 @@ export const en = {
     lead: 'Open to remote frontend roles.',
     linkedin: 'LinkedIn',
   },
-  footer: { note: 'Static site: Astro, Tailwind CSS v4, no framework JS.' },
+  notFound: {
+    title: 'Page not found',
+    text: 'That address does not exist on this site.',
+    home: 'Go to the home page',
+  },
 };
 
 export type Dictionary = typeof en;

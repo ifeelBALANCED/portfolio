@@ -6,6 +6,7 @@ export const uk: Dictionary = {
     description:
       'Фронтенд-інженер (React / TypeScript) у Києві. 5+ років у GIS, фінтеху та аналітиці; змерджені зміни в TanStack DB; робота над Rust-лінтером Oxc.',
     ogLocale: 'uk_UA',
+    ogImage: '/og-uk.png',
   },
   skip: 'Перейти до вмісту',
   toolbar: { brand: 'VH / ФРОНТЕНД-ІНЖЕНЕР' },
@@ -23,13 +24,15 @@ export const uk: Dictionary = {
     headingLead: 'Фронтенд-',
     headingTail: 'інженер',
     dimension: 'масштаб 1:1',
-    lede: 'Я будую насичені даними інтерфейси на React і TypeScript: GIS на ArcGIS, фінтех, аналітичні дашборди. Виправляю й апстрім. Список справжній, разом із PR, які не злилися.',
+    lede: 'Я будую насичені даними інтерфейси на React і TypeScript: GIS на ArcGIS, фінтех, аналітичні дашборди. Виправляю й самі бібліотеки. Список справжній, разом із PR, які не змерджили.',
     spec: {
       focus: { label: 'Фокус', value: 'Мапи (ArcGIS), фінтех, аналітика' },
       stack: { label: 'Стек', value: 'React · TypeScript' },
       experience: { label: 'Досвід', value: '5+ років' },
       base: { label: 'Локація', value: 'Київ' },
+      status: { label: 'Статус', value: 'Відкритий до віддалених фронтенд-ролей' },
     },
+    contact: 'Написати мені',
     seePrs: 'До PR',
     github: 'GitHub',
     cv: 'Завантажити CV (PDF)',
@@ -37,10 +40,10 @@ export const uk: Dictionary = {
   ledger: {
     title: 'Зміни в open source',
     filterLabel: 'Фільтр pull request’ів',
-    filters: { all: 'Усі', merged: 'Влиті', open: 'Відкриті', closed: 'Закриті' },
-    states: { merged: 'Влито', open: 'Відкрито', closed: 'Закрито · не влито' },
+    filters: { all: 'Усі', merged: 'Змерджені', open: 'Відкриті', closed: 'Закриті' },
+    states: { merged: 'Змерджено', open: 'Відкрито', closed: 'Закрито · без мерджу' },
     stat: 'Стан на {date}',
-    closedNote: 'Закриті без злиття PR показано навмисно.',
+    closedNote: 'PR, закриті без мерджу, показано навмисно.',
   },
   history: {
     title: 'Історія змін',
@@ -70,5 +73,9 @@ export const uk: Dictionary = {
     lead: 'Відкритий до віддалених фронтенд-ролей.',
     linkedin: 'LinkedIn',
   },
-  footer: { note: 'Статичний сайт: Astro, Tailwind CSS v4, без фреймворк-JS.' },
+  notFound: {
+    title: 'Сторінку не знайдено',
+    text: 'Такої адреси на цьому сайті немає.',
+    home: 'На головну',
+  },
 };

@@ -9,7 +9,7 @@ const TITLES: Record<Locale, RegExp> = {
   en: /Vladyslav Herasymenko — Frontend engineer/,
   uk: /Владислав Герасименко — Фронтенд-інженер/,
 };
-const CLOSED_LABEL: Record<Locale, RegExp> = { en: /not merged/i, uk: /не влито/i };
+const CLOSED_LABEL: Record<Locale, RegExp> = { en: /not merged/i, uk: /без мерджу/i };
 const DEMO = 'https://effector-vite-template.surge.sh';
 
 const themeRadio = (page: Page, label: string) => page.getByRole('radio', { name: label });
@@ -43,6 +43,10 @@ for (const locale of LOCALES) {
             home.locator(`link[rel="alternate"][hreflang="${hreflang}"]`),
           ).toHaveAttribute('href', `${SITE}${path}`);
         }
+        await expect(home.locator('meta[property="og:image"]')).toHaveAttribute(
+          'content',
+          `${SITE}${copy.meta.ogImage}`,
+        );
         await expect(home.locator('meta[property="og:locale"]')).toHaveAttribute(
           'content',
           copy.meta.ogLocale,
@@ -82,6 +86,12 @@ for (const locale of LOCALES) {
       await expect(closed.filter({ hasNotText: CLOSED_LABEL[locale] })).toHaveCount(0);
     });
 
+    test('the share image of this edition is served', async ({ request }) => {
+      const response = await request.get(copy.meta.ogImage);
+      expect(response.ok()).toBe(true);
+      expect(response.headers()['content-type']).toContain('image/png');
+    });
+
     test('the CV link serves a PDF', { tag: '@smoke' }, async ({ home, request }) => {
       const href = await home.getByRole('link', { name: copy.hero.cv }).getAttribute('href');
       expect(href).toBeTruthy();
@@ -96,6 +106,19 @@ for (const locale of LOCALES) {
       await expect(home.locator('.inventory > li').first()).toHaveAttribute('data-featured', '');
       await expect(featured.locator(`a[href^="${DEMO}"]`)).toHaveCount(1);
       await expect(home.locator(`a[href^="${DEMO}"]`)).toHaveCount(1);
+    });
+
+    test('offers a contact action first and states availability', async ({ home }) => {
+      const first = home.locator('.hero .actions a').first();
+      await expect(first).toHaveText(copy.hero.contact);
+      await expect(first).toHaveAttribute('href', /^mailto:[^@\s]+@[^@\s]+$/);
+      await expect(home.getByText(copy.hero.spec.status.value, { exact: true })).toBeVisible();
+    });
+
+    test('the contact section is a labelled landmark with a heading', async ({ home }) => {
+      const footer = home.getByRole('contentinfo');
+      await expect(footer.getByRole('heading', { level: 2 })).toContainText(copy.contact.title);
+      await expect(footer.getByRole('link', { name: copy.contact.linkedin })).toBeVisible();
     });
 
     test('skip link is the first tab stop, shows focus and jumps to the content', async ({
@@ -235,4 +258,62 @@ test.describe('with an unknown stored theme', () => {
   test('falls back to the OS default', async ({ home }) => {
     await expect(home.locator('html')).toHaveAttribute('data-theme', 'paper');
   });
+});
+
+test.describe('unknown address', () => {
+  test.use({ expectedErrors: [/status of 404/] });
+
+  test('gets a bilingual 404 that is kept out of search', async ({ page }) => {
+    const response = await page.goto('/definitely-not-here');
+    expect(response?.status()).toBe(404);
+    await expect(page).toHaveTitle(/404/);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+    await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);
+    await expect(page.getByRole('link', { name: t('en').notFound.home })).toHaveAttribute(
+      'href',
+      '/',
+    );
+    await expect(page.getByRole('link', { name: t('uk').notFound.home })).toHaveAttribute(
+      'href',
+      '/uk/',
+    );
+  });
+});
+
+test.describe('forced colors', () => {
+  test.use({ colorScheme: 'light' });
+
+  test('theme swatches keep their colours and the selected one is outlined', async ({ home }) => {
+    await home.emulateMedia({ forcedColors: 'active' });
+    const swatches = home.locator('.swatch');
+    await expect(swatches).toHaveCount(THEMES.length);
+    for (const swatch of await swatches.all()) {
+      await expect(swatch).not.toHaveCSS('background-image', 'none');
+    }
+    await themeRadio(home, 'Lab').check({ force: true });
+    await expect(home.locator('#t-lab + .swatch')).toHaveCSS('outline-style', 'solid');
+  });
+});
+
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+
+  test('a clicked theme still restyles the page through CSS alone', async ({ home }) => {
+    const blueprint = THEMES.find((theme) => theme.id === 'blueprint');
+    await home.getByTitle('Blueprint').click({ force: true });
+    await expect(home.locator('body')).toHaveCSS('background-color', hexToRgb(blueprint?.bg ?? ''));
+  });
+});
+
+test('production sends the security headers', { tag: '@smoke' }, async ({ request }) => {
+  test.skip(
+    !process.env.BASE_URL,
+    'headers come from vercel.json; astro preview does not apply them',
+  );
+  const headers = (await request.get('/')).headers();
+  expect(headers['content-security-policy']).toContain("default-src 'none'");
+  expect(headers['content-security-policy']).toMatch(/script-src ('sha256-[\w+/=]+' ?)+;/);
+  expect(headers['permissions-policy']).toContain('camera=()');
+  expect(headers['x-content-type-options']).toBe('nosniff');
+  expect(headers['cross-origin-opener-policy']).toBe('same-origin');
 });

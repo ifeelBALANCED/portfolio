@@ -16,7 +16,7 @@ const { locale } = Astro.props;
 const copy = t(locale);
 const build = new Date().toISOString().slice(0, 10);
 const spec = copy.hero.spec;
-const specRows = [spec.focus, spec.stack, spec.experience, spec.base];
+const specRows = [spec.focus, spec.stack, spec.experience, spec.base, spec.status];
 const pinnedFirst = projects.toSorted((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false));
 ---
 <Base locale={locale}>
@@ -31,7 +31,8 @@ const pinnedFirst = projects.toSorted((a, b) => Number(b.featured ?? false) - Nu
           <p class="person">{profile.name[locale]}</p>
           <p class="lede">{copy.hero.lede}</p>
           <div class="actions">
-            <a class="btn" href="#open-source">{copy.hero.seePrs}</a>
+            <a class="btn" href={`mailto:${profile.email}`}>{copy.hero.contact}</a>
+            <a class="mono" href="#open-source">{copy.hero.seePrs}</a>
             <a class="mono" href={profile.github} rel="me">{copy.hero.github} ↗</a>
             <a class="mono" href="/Vladyslav_Herasymenko_CV.pdf">{copy.hero.cv}</a>
           </div>
@@ -108,15 +109,13 @@ const pinnedFirst = projects.toSorted((a, b) => Number(b.featured ?? false) - Nu
     </section>
   </main>
 
-  <footer class="end" id="contact">
-    <p class="mono caps text-muted">§ 05 · {copy.contact.title}</p>
+  <footer class="end" id="contact" aria-labelledby="contact-h">
+    <h2 class="mono caps text-muted" id="contact-h">§ 05 · {copy.contact.title}</h2>
     <p class="lede">{copy.contact.lead}</p>
     <a class="mail" href={`mailto:${profile.email}`}>{profile.email}</a>
     <p class="end-links mono">
       <a href={profile.github} rel="me">GitHub</a>
       <a href={profile.linkedin} rel="me">{copy.contact.linkedin}</a>
-      <a href={`mailto:${profile.email}`}>email</a>
     </p>
-    <p class="end-mark mono">∎ {copy.footer.note}</p>
   </footer>
 </Base>
