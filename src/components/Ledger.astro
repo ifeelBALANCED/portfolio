@@ -1,0 +1,75 @@
+---
+import { ledger } from '../data/ledger';
+import { orderLedger, pullRequestUrl, tally, type PullRequestStatus } from '../domain/contributions';
+import { fill } from '../domain/format';
+import type { Locale } from '../domain/locale';
+import { t } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = t(locale).ledger;
+const counts = tally(ledger.repos);
+const repos = orderLedger(ledger.repos);
+const MARK: Record<PullRequestStatus, string> = { merged: '+', open: '~', closed: '−' };
+const STATUSES: readonly PullRequestStatus[] = ['merged', 'open', 'closed'];
+const filters = [['all', copy.filters.all] as const, ...STATUSES.filter((s) => counts[s] > 0).map((s) => [s, copy.filters[s]] as const)];
+---
+<section class="window" id="open-source" aria-labelledby="ledger-title">
+  <div class="window-head">
+    <h2 class="window-title mono" id="ledger-title">{copy.title}</h2>
+    <p class="stat mono">
+      <span class="stat-text">
+        <span class="text-add">+{counts.merged}</span>
+        <span class="text-open">~{counts.open}</span>
+        <span class="text-del">−{counts.closed}</span>
+      </span>
+      <span class="stat-bar" aria-hidden="true">
+        {STATUSES.map((s) => counts[s] > 0 && <i style={`flex-grow:${counts[s]};background:var(--${s === 'merged' ? 'add' : s === 'open' ? 'open' : 'del'})`}></i>)}
+      </span>
+    </p>
+    <fieldset class="filter mono">
+      <legend class="sr-only">{copy.filterLabel}</legend>
+      {filters.map(([id, label]) => (
+        <label>
+          <input class="sr-only" type="radio" name="filter" id={`f-${id}`} value={id} checked={id === 'all'} />
+          {label}
+        </label>
+      ))}
+    </fieldset>
+  </div>
+
+  {repos.map((repo) => {
+    const own = tally([repo]);
+    return (
+      <div class="hunk">
+        <div class="hunk-head mono">
+          <h3>@@ {repo.repo} @@</h3>
+          <span>
+            {own.merged > 0 && <span class="text-add">+{own.merged} </span>}
+            {own.open > 0 && <span class="text-open">~{own.open} </span>}
+            {own.closed > 0 && <span class="text-del">−{own.closed}</span>}
+          </span>
+        </div>
+        {repo.pullRequests.map((pr) => (
+          <a class="pr" data-s={pr.status} href={pullRequestUrl(repo.repo, pr.number)}>
+            <span class="pr-no mono">#{pr.number}</span>
+            <span class="pr-mark mono" aria-hidden="true">{MARK[pr.status]}</span>
+            <span class="pr-body">
+              <span class="pr-title">{pr.title}</span>
+              <span class="pr-note">{pr.note[locale]}</span>
+            </span>
+            <span class="pr-tag mono">{copy.states[pr.status]}<span class="pr-arrow" aria-hidden="true"> ↗</span></span>
+          </a>
+        ))}
+      </div>
+    );
+  })}
+
+  <div class="window-foot mono">
+    <span>{fill(copy.stat, { date: ledger.snapshot })}</span>
+    {counts.closed > 0 && <span>{copy.closedNote}</span>}
+  </div>
+</section>

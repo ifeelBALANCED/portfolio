@@ -2,5 +2,5 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": ["src/pages/**/*.astro", "tests/**/*.ts", "scripts/*.ts"],
   "project": ["src/**/*.{ts,astro}", "tests/**/*.ts", "scripts/*.ts"],
-  "ignoreDependencies": ["@fontsource/instrument-serif", "@fontsource-variable/jetbrains-mono"]
+  "ignoreDependencies": ["tailwindcss"]
 }

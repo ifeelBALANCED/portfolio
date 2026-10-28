@@ -1,34 +1,63 @@
 ---
 import '../styles/global.css';
+import onestLatin from '@fontsource-variable/onest/files/onest-latin-wght-normal.woff2?url';
+import onestCyrillic from '@fontsource-variable/onest/files/onest-cyrillic-wght-normal.woff2?url';
+import monoLatin from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+import monoCyrillic from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-cyrillic-wght-normal.woff2?url';
 import { profile } from '../data/profile';
-const title = `${profile.name} — ${profile.role}`;
-const description = 'Senior Frontend Engineer (React / TypeScript) in Kyiv. 5+ years across GIS, fintech and analytics; merged TanStack DB contributor; Rust linter work in Oxc.';
-const url = new URL(Astro.url.pathname, Astro.site);
+import { LOCALES, alternates, localizedPath, type Locale } from '../domain/locale';
+import { THEMES, themeCss } from '../domain/themes';
+import { t } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = t(locale);
+const origin = Astro.site?.origin ?? '';
+const url = new URL(localizedPath(locale), Astro.site);
+const image = new URL('/og.png', Astro.site);
+const fonts = locale === 'uk' ? [onestLatin, onestCyrillic, monoLatin, monoCyrillic] : [onestLatin, monoLatin];
+const known = JSON.stringify(THEMES.map((theme) => theme.id));
+const themeScript = `try{var d=document.documentElement,t=localStorage.getItem('vh-theme');if(${known}.indexOf(t)<0)t=matchMedia('(prefers-color-scheme:dark)').matches?'graphite':'paper';d.dataset.theme=t}catch(e){}`;
 ---
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{copy.meta.title}</title>
+    <meta name="description" content={copy.meta.description} />
     <link rel="canonical" href={url} />
+    {alternates(origin).map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content="#0e0e0c" />
+    <meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101214" media="(prefers-color-scheme: dark)" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={copy.meta.title} />
+    <meta property="og:description" content={copy.meta.description} />
     <meta property="og:url" content={url} />
-    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image" content={image} />
+    <meta property="og:locale" content={copy.meta.ogLocale} />
+    {LOCALES.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={t(l).meta.ogLocale} />)}
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content={new URL('/og.png', Astro.site)} />
+    <meta name="twitter:image" content={image} />
+    {fonts.map((href) => <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />)}
+    <style is:inline set:html={themeCss(THEMES)}></style>
+    <script is:inline set:html={themeScript}></script>
     <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org', '@type': 'Person', name: profile.name, jobTitle: profile.role,
-      url: Astro.site, sameAs: [profile.github, profile.linkedin], address: { '@type': 'PostalAddress', addressLocality: 'Kyiv', addressCountry: 'UA' },
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: profile.name.en,
+      jobTitle: t('en').hero.headingLead + t('en').hero.headingTail,
+      url: Astro.site,
+      sameAs: [profile.github, profile.linkedin],
+      address: { '@type': 'PostalAddress', addressLocality: 'Kyiv', addressCountry: 'UA' },
     })} />
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main">{copy.skip}</a>
     <slot />
   </body>
 </html>

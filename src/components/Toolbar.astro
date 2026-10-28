@@ -1,0 +1,65 @@
+---
+import { LOCALES, localizedPath, type Locale } from '../domain/locale';
+import { THEMES } from '../domain/themes';
+import { t } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = t(locale);
+const [brandShort = '', ...brandRest] = copy.toolbar.brand.split(' / ');
+const names: Record<Locale, string> = { en: 'English', uk: 'Українська' };
+const codes: Record<Locale, string> = { en: 'EN', uk: 'УК' };
+const links = [
+  ['#open-source', copy.nav.changeset],
+  ['#experience', copy.nav.history],
+  ['#stack', copy.nav.spec],
+  ['#repos', copy.nav.inventory],
+  ['#contact', copy.nav.contact],
+] as const;
+---
+<header class="toolbar">
+  <div class="toolbar-inner mono">
+    <a class="brand" href={localizedPath(locale)}>{brandShort}<span class="max-sm:sr-only"> / {brandRest.join(' / ')}</span></a>
+    <nav class="toolbar-nav" aria-label={copy.nav.label}>
+      {links.map(([href, label]) => <a href={href}>{label}</a>)}
+    </nav>
+    <div class="toolbar-controls">
+      <nav class="lang" aria-label={copy.switchers.language}>
+        {LOCALES.map((l) => (
+          <a
+            href={localizedPath(l)}
+            hreflang={l}
+            lang={l}
+            aria-label={names[l]}
+            aria-current={l === locale ? 'page' : undefined}>{codes[l]}</a>
+        ))}
+      </nav>
+      <fieldset class="themes">
+        <legend class="sr-only">{copy.switchers.theme}</legend>
+        {THEMES.map((theme) => (
+          <label class="theme-pick" title={theme.label}>
+            <input class="sr-only" type="radio" name="theme" id={`t-${theme.id}`} value={theme.id} />
+            <span class="swatch" style={`--sw-bg:${theme.bg};--sw-ac:${theme.accent}`}></span>
+            <span class="sr-only">{theme.label}</span>
+          </label>
+        ))}
+      </fieldset>
+      <script is:inline>
+        (function () {
+          var root = document.documentElement;
+          var current = document.getElementById('t-' + root.dataset.theme);
+          if (current) current.checked = true;
+          addEventListener('change', function (e) {
+            var r = e.target;
+            if (r.name !== 'theme') return;
+            root.dataset.theme = r.value;
+            try { localStorage.setItem('vh-theme', r.value); } catch (_) {}
+          });
+        })();
+      </script>
+    </div>
+  </div>
+</header>

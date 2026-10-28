@@ -1,0 +1,114 @@
+---
+import Base from '../layouts/Base.astro';
+import Ledger from './Ledger.astro';
+import SectionHead from './SectionHead.astro';
+import Toolbar from './Toolbar.astro';
+import { education, experience, profile, projects, stack } from '../data/profile';
+import { fill, formatPeriod } from '../domain/format';
+import type { Locale } from '../domain/locale';
+import { t } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = t(locale);
+const build = new Date().toISOString().slice(0, 10);
+const spec = copy.hero.spec;
+const specRows = [spec.focus, spec.stack, spec.experience, spec.base];
+---
+<Base locale={locale}>
+  <Toolbar locale={locale} />
+  <main id="main">
+    <div class="hero">
+      <div class="hero-left">
+        <div class="hero-intro">
+          <p class="mono caps text-muted">{fill(copy.hero.kicker, { date: build })}</p>
+          <h1 class="display">{copy.hero.headingLead}<span class="tail">{copy.hero.headingTail}</span></h1>
+          <div class="dim mono" aria-hidden="true"><span>{copy.hero.dimension}</span></div>
+          <p class="person">{profile.name[locale]}</p>
+          <p class="lede">{copy.hero.lede}</p>
+          <div class="actions">
+            <a class="btn" href="#open-source">{copy.hero.seePrs}</a>
+            <a class="mono" href={profile.github} rel="me">{copy.hero.github} ↗</a>
+            <a class="mono" href="/Vladyslav_Herasymenko_CV.pdf">{copy.hero.cv}</a>
+          </div>
+        </div>
+        <dl class="hero-spec spec-table">
+          {specRows.map((row) => (
+            <div><dt class="mono">{row.label}</dt><dd>{row.value}</dd></div>
+          ))}
+        </dl>
+      </div>
+      <Ledger locale={locale} />
+    </div>
+
+    <section class="sec" id="experience" aria-labelledby="experience-h">
+      <SectionHead num="02" id="experience-h" title={copy.history.title} />
+      <ol class="rail">
+        {experience.map((job, index) => (
+          <li class="rev" data-current={job.end === null ? '' : undefined}>
+            <div class="rev-meta">
+              <p class="rev-org">{job.org[locale]} · {job.place[locale]}</p>
+              <p class="mono text-muted">r{experience.length - index} · {formatPeriod(job.start, job.end, copy.history.present)}</p>
+            </div>
+            <div>
+              <h3 class="rev-role">{job.role[locale]}</h3>
+              <ul>{job.points[locale].map((point) => <li>{point}</li>)}</ul>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div class="edu">
+        <div>
+          <p class="rev-org">{education.school[locale]}</p>
+          <p class="mono text-muted">{education.period[locale]}</p>
+        </div>
+        <p>{education.degree[locale]}</p>
+      </div>
+    </section>
+
+    <section class="sec" id="stack" aria-labelledby="stack-h">
+      <SectionHead num="03" id="stack-h" title={copy.spec.title} />
+      <dl class="datasheet">
+        {stack.map((row) => (
+          <div><dt class="mono">{copy.spec.groups[row.group]}</dt><dd>{row.items.join(' / ')}</dd></div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="sec" id="repos" aria-labelledby="repos-h">
+      <SectionHead num="04" id="repos-h" title={copy.inventory.title}>
+        <p class="sec-lede">{copy.inventory.intro}</p>
+      </SectionHead>
+      <ul class="inventory">
+        {projects.map((project) => (
+          <li>
+            <p class="inv-name">{project.name}{project.demo && <span class="pill mono">{copy.inventory.live}</span>}</p>
+            <p class="inv-desc">{project.desc[locale]}</p>
+            <div class="inv-meta">
+              <p class="mono text-muted">{project.lang} · ★ {project.stars}</p>
+              <p class="inv-links mono">
+                <a href={project.href}>{copy.inventory.code} ↗</a>
+                {project.demo && <a href={project.demo}>{copy.inventory.demo} ↗</a>}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
+
+  <footer class="end" id="contact">
+    <p class="mono caps text-muted">§ 05 · {copy.contact.title}</p>
+    <p class="lede">{copy.contact.lead}</p>
+    <a class="mail" href={`mailto:${profile.email}`}>{profile.email}</a>
+    <p class="end-links mono">
+      <a href={profile.github} rel="me">GitHub</a>
+      <a href={profile.linkedin} rel="me">{copy.contact.linkedin}</a>
+      <a href={`mailto:${profile.email}`}>email</a>
+    </p>
+    <p class="end-mark mono">∎ {copy.footer.note}</p>
+  </footer>
+</Base>

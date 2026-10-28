@@ -1,0 +1,14 @@
+---
+interface Props {
+  num: string;
+  id: string;
+  title: string;
+}
+
+const { num, id, title } = Astro.props;
+---
+<header class="sec-head">
+  <span class="sec-num mono" aria-hidden="true">§ {num}</span>
+  <h2 class="sec-title" id={id}>{title}</h2>
+  <slot />
+</header>
