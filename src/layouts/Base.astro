@@ -20,7 +20,7 @@ const url = new URL(localizedPath(locale), Astro.site);
 const image = new URL('/og.png', Astro.site);
 const fonts = locale === 'uk' ? [onestLatin, onestCyrillic, monoLatin, monoCyrillic] : [onestLatin, monoLatin];
 const known = JSON.stringify(THEMES.map((theme) => theme.id));
-const themeScript = `try{var d=document.documentElement,t=localStorage.getItem('vh-theme');if(${known}.indexOf(t)<0)t=matchMedia('(prefers-color-scheme:dark)').matches?'graphite':'paper';d.dataset.theme=t}catch(e){}`;
+const themeScript = `var t=null;try{t=localStorage.getItem('vh-theme')}catch(e){}if(${known}.indexOf(t)<0)t=matchMedia('(prefers-color-scheme:dark)').matches?'graphite':'paper';document.documentElement.dataset.theme=t`;
 ---
 <!doctype html>
 <html lang={locale}>

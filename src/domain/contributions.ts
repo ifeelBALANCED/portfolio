@@ -1,4 +1,4 @@
-import { type Localized } from './locale';
+import type { Localized } from './locale.ts';
 
 const STATUSES = ['merged', 'open', 'closed'] as const;
 export type PullRequestStatus = (typeof STATUSES)[number];
