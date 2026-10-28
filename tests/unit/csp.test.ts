@@ -56,6 +56,7 @@ describe('contentSecurityPolicy', () => {
       "img-src 'self' data:",
       "style-src 'unsafe-inline'",
       "manifest-src 'self'",
+      "connect-src 'self'",
     ]) {
       expect(csp.split('; ')).toContain(part);
     }

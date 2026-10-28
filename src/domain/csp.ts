@@ -21,6 +21,7 @@ export const contentSecurityPolicy = (hashes: readonly string[]): string => {
     "font-src 'self'",
     "img-src 'self' data:",
     "manifest-src 'self'",
+    "connect-src 'self'",
     "base-uri 'none'",
     "form-action 'none'",
     "frame-ancestors 'none'",

@@ -316,6 +316,8 @@ test('production sends the security headers', { tag: '@smoke' }, async ({ reques
   expect([307, 308]).toContain(duplicate.status());
   expect(duplicate.headers().location).toBe('/uk/');
   expect(headers['content-security-policy']).toContain("default-src 'none'");
+  expect(headers['content-security-policy']).toContain("connect-src 'self'");
+  expect(headers['permissions-policy']).not.toContain('browsing-topics');
   expect(headers['content-security-policy']).toMatch(/script-src ('sha256-[\w+/=]+' ?)+;/);
   expect(headers['permissions-policy']).toContain('camera=()');
   expect(headers['x-content-type-options']).toBe('nosniff');
