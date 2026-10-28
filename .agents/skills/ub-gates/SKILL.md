@@ -31,6 +31,7 @@ The tools' own bootstrap uses the system Python (3.9 here) and fails; the `uv ve
 
 - High CRAP: split the function or test it. Not a reason to add abstractions.
 - Survivor: first ask if it is an _equivalent mutant_ (e.g. `??` → `||` on always-truthy strings). If so, restructure the code so the mutation is meaningless; otherwise add a behavior test that kills it. Never write a test that only mirrors the implementation.
+- Known equivalent survivors (accepted): `themes.ts` `toLinear` `<=` and `fromLinear` `<=` at the sRGB thresholds. The two branches agree at the boundary and no 8-bit channel or oklab result lands on it, so no input can tell `<=` from `<`.
 - Uncovered code you cannot honestly test: delete it or leave it uncovered; do not write a fake test.
 - Outputs go to `.metrics/` and `target/` (gitignored). Not run in CI: they need local tools.
 

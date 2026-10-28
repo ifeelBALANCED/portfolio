@@ -6,7 +6,8 @@ Read when touching `src/`, `scripts/`, build config or toolchain versions.
 
 - `src/data/*.json|ts`: content only. JSON is parsed at the boundary (`src/data/ledger.ts` calls `parseLedger`), so malformed data fails the build. Why: illegal states cannot reach the page.
 - `src/domain/`: pure functions and types, no I/O, no Astro imports. All logic worth testing lives here.
-- `src/pages/index.astro`: single page; presentation only, no business logic.
+- `src/pages/index.astro` (English, `/`) and `src/pages/uk/index.astro` (`/uk/`) both render `src/components/Home.astro`; presentation only, no business logic. Astro `i18n` has `prefixDefaultLocale: false`.
+- `src/i18n/{en,uk}.ts`: UI strings; `uk` is typed as `Dictionary` so a missing key fails `astro check`. Content that is prose (jobs, projects, ledger notes) carries `Localized<T>` = `{ en, uk }` and is validated or typed. Proper names (PR titles, repos, employers) stay English.
 - `scripts/`: I/O shells (GitHub API, file writes). Inject `fetch` so they stay testable; keep the entry file as thin wiring.
 
 ## Toolchain constraints (each one broke a build once)
@@ -15,7 +16,7 @@ Read when touching `src/`, `scripts/`, build config or toolchain versions.
 - TypeScript **6**, not 7: `astro check` rejects TS 7.
 - `pnpm` version is pinned by `packageManager`; CI's `pnpm/action-setup` fails without it.
 - Playwright starts `astro preview --ignore-lock`: Astro 7 preview uses a lockfile and refuses a second instance.
-- Fonts are CSS `@import`s, invisible to knip; they are listed in `knip.json` `ignoreDependencies`. Keep that list in sync if fonts change.
+- `tailwindcss` is only referenced from CSS, so knip lists it in `ignoreDependencies`. Font packages are picked up through the `?url` preload imports in `Base.astro`.
 - Scripts import `.ts` extensions directly (Node type stripping); `tsconfig` sets `allowImportingTsExtensions`.
 
 ## Domain vocabulary

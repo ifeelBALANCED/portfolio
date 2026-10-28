@@ -16,7 +16,7 @@ Data: `src/data/ledger.json` (validated by `parseLedger` in `src/domain/contribu
 ## New PR or repo
 
 1. Fetch real facts first: `gh pr view <n> -R <owner/repo> --json title,state,mergedAt,body`.
-2. Add the row (`number`, short `title`, `status`, one-sentence `note` using only claims from the PR). New repo: add `{ repo: "owner/name", stack, pullRequests: [...] }`.
+2. Add the row (`number`, short `title`, `status`, one-sentence `note` as `{ "en": ..., "uk": ... }` using only claims from the PR; the build fails without both). New repo: add `{ repo: "owner/name", stack, pullRequests: [...] }`.
 3. Run `pnpm test` — a malformed row fails with `Invalid ledger: …`.
 4. `pnpm ledger:refresh` to sync statuses, then `pnpm verify`.
 5. Commit: `feat: add <repo> PR #<n> to ledger`.

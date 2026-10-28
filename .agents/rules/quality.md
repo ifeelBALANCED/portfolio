@@ -15,7 +15,7 @@ Read before committing, and when adding tests, CI or dependencies.
 
 ## Dependencies
 
-Add one only with a justification here or in `DECISIONS.md`. Current justified set: Astro; two font packages; oxlint, oxfmt, knip; vitest + `@vitest/coverage-v8` (crapper needs coverage); Playwright + `@axe-core/playwright` (WCAG gate).
+Add one only with a justification here or in `DECISIONS.md`. Current justified set: Astro; Tailwind CSS v4 (`tailwindcss`, `@tailwindcss/vite`); two font packages (Onest, JetBrains Mono, both with Cyrillic); oxlint, oxfmt, knip; vitest + `@vitest/coverage-v8` (crapper needs coverage); Playwright + `@axe-core/playwright` (WCAG gate).
 
 ## Delivery
 

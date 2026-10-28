@@ -1,6 +1,6 @@
 # portfolio
 
-Personal site for Vladyslav Herasymenko. Astro 7, static output, no client JavaScript.
+Personal site for Vladyslav Herasymenko. Astro 7, Tailwind CSS v4, static output, English and Ukrainian, five themes, no framework JavaScript.
 Live: https://vladyslav-herasymenko.vercel.app
 
 ## Develop
@@ -34,4 +34,4 @@ pnpm dev            # http://localhost:4321
 
 ## Content
 
-Experience comes from the CV. Open-source rows live in `src/data/ledger.json` and are validated at build time by `src/domain/contributions.ts`.
+Experience comes from the CV; every visible string has an `en` and a `uk` value (`src/i18n`, `src/data/profile.ts`, ledger notes). Themes are defined once in `src/domain/themes.ts`, which generates the CSS and is contrast-tested. Open-source rows live in `src/data/ledger.json` and are validated at build time by `src/domain/contributions.ts`.
