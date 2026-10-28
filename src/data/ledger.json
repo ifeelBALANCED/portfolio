@@ -1,0 +1,95 @@
+{
+  "snapshot": "2026-10-28",
+  "repos": [
+    {
+      "repo": "TanStack/db",
+      "stack": "TypeScript · query engine",
+      "pullRequests": [
+        {
+          "number": 1745,
+          "title": "Prevent ReDoS in like()/ilike() matching",
+          "status": "merged",
+          "note": "Replaced backtracking pattern matching with an iterative two-pointer matcher; checked against the old one with a 200k-case differential fuzz."
+        },
+        {
+          "number": 1748,
+          "title": "Drive inner joins from a correlation-bounded lazy side inside includes",
+          "status": "closed",
+          "note": "Fixes #1709: 289 ms to 1 ms on a 200k-row case."
+        },
+        {
+          "number": 1746,
+          "title": "Serve joins on a collection primary key via an implicit key index",
+          "status": "closed",
+          "note": "Fixes #1708: derives a synthetic index from getKey instead of requiring a manual one."
+        },
+        {
+          "number": 1747,
+          "title": "Support nested optional property access in SingleRowRefProxy",
+          "status": "closed",
+          "note": "Fixes #1726: row.updatedAt?.seconds now type-checks in where/createIndex callbacks."
+        }
+      ]
+    },
+    {
+      "repo": "oxc-project/oxc",
+      "stack": "Rust · linter",
+      "pullRequests": [
+        {
+          "number": 25843,
+          "title": "linter/vue: no-deprecated-dollar-listeners-api",
+          "status": "open",
+          "note": "Part of the Vue plugin umbrella issue #11440."
+        },
+        {
+          "number": 25844,
+          "title": "linter/vue: no-deprecated-dollar-scopedslots-api",
+          "status": "open",
+          "note": "Includes an auto-fix that rewrites $scopedSlots to $slots."
+        },
+        {
+          "number": 25845,
+          "title": "linter/vue: component-options-name-casing",
+          "status": "open",
+          "note": "Snapshot-tested rule with generated config schema."
+        },
+        {
+          "number": 25846,
+          "title": "linter/vue: no-mutating-props",
+          "status": "open",
+          "note": "Handles aliasing through const this-aliases."
+        }
+      ]
+    },
+    {
+      "repo": "zed-industries/zed",
+      "stack": "Rust · editor",
+      "pullRequests": [
+        {
+          "number": 61719,
+          "title": "git_ui: Resolve merge conflicts from the keyboard",
+          "status": "open",
+          "note": "Keyboard-driven conflict resolution in the git panel."
+        },
+        {
+          "number": 61851,
+          "title": "sidebar: Show the worktree name for subdirectory workspaces",
+          "status": "open",
+          "note": "Small UX fix for multi-project windows."
+        }
+      ]
+    },
+    {
+      "repo": "wannabespace/tamery",
+      "stack": "TypeScript · database client",
+      "pullRequests": [
+        {
+          "number": 377,
+          "title": "Add EXPLAIN support to the SQL editor for PostgreSQL",
+          "status": "merged",
+          "note": "Query plans from inside the editor."
+        }
+      ]
+    }
+  ]
+}

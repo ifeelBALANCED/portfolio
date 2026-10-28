@@ -1,7 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
 import { profile, experience, stack, education, projects } from '../data/profile';
-import { contributions, snapshot } from '../data/contributions';
+import { ledger } from '../data/ledger';
+import { pullRequestUrl, tally } from '../domain/contributions';
+
+const counts = tally(ledger.repos);
 ---
 <Base>
   <div class="wrap">
@@ -32,19 +35,24 @@ import { contributions, snapshot } from '../data/contributions';
         <div class="sec-head">
           <span class="label">01 · Open source</span>
           <h2 id="oss-h">A public <em>ledger</em> of pull requests</h2>
-          <p>Every row links to the real PR. Status is as of {snapshot}; closed means closed without merging, and I list those too.</p>
+          <p>Every row links to the real PR. Status is as of {ledger.snapshot}; closed means closed without merging, and I list those too.</p>
         </div>
+        <dl class="tally" aria-label="Pull request totals">
+          <div><dt>merged</dt><dd>{counts.merged}</dd></div>
+          <div><dt>open</dt><dd>{counts.open}</dd></div>
+          <div><dt>closed</dt><dd>{counts.closed}</dd></div>
+        </dl>
         <div class="ledger">
-          {contributions.map((c) => (
+          {ledger.repos.map((r) => (
             <div class="repo">
-              <h3>{c.repo}</h3>
-              <span class="label">{c.stack}</span>
-              {c.items.map((i) => (
+              <h3>{r.repo}</h3>
+              <span class="label">{r.stack}</span>
+              {r.pullRequests.map((pr) => (
                 <div class="pr">
-                  <span class={`chip ${i.status}`}>{i.status}</span>
+                  <span class={`chip ${pr.status}`}>{pr.status}</span>
                   <div>
-                    <a class="t" href={`https://github.com/${c.repo}/pull/${i.n}`}>#{i.n} {i.title}</a>
-                    <p>{i.note}</p>
+                    <a class="t" href={pullRequestUrl(r.repo, pr.number)}>#{pr.number} {pr.title}</a>
+                    <p>{pr.note}</p>
                   </div>
                 </div>
               ))}
@@ -82,7 +90,12 @@ import { contributions, snapshot } from '../data/contributions';
           <p>Public, personal-time projects. Employer code is private and not listed.</p></div>
         <div class="projects">
           {projects.map((p) => (
-            <a class="proj" href={p.href}><span class="label">★ {p.stars} · {p.lang}</span><b>{p.name}</b><span>{p.desc}</span></a>
+            <article class="proj">
+              <span class="label">★ {p.stars} · {p.lang}</span>
+              <b>{p.name}</b>
+              <span>{p.desc}</span>
+              <span class="links"><a href={p.href}>source</a>{p.demo && <a href={p.demo}>live demo</a>}</span>
+            </article>
           ))}
         </div>
       </section>

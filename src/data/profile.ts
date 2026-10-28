@@ -68,12 +68,36 @@ export const experience = [
 ];
 
 export const stack = [
-  { group: 'Languages', items: ['TypeScript', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Sass/SCSS', 'Rust (OSS)'] },
-  { group: 'Frontend', items: ['React', 'Next.js', 'Redux Toolkit', 'Redux Saga', 'React Router', 'Tailwind CSS', 'Material UI', 'Vite'] },
-  { group: 'Architecture', items: ['Feature-Sliced Design', 'Atomic Design', 'Dependency injection (Inversify)'] },
+  {
+    group: 'Languages',
+    items: ['TypeScript', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Sass/SCSS', 'Rust (OSS)'],
+  },
+  {
+    group: 'Frontend',
+    items: [
+      'React',
+      'Next.js',
+      'Redux Toolkit',
+      'Redux Saga',
+      'React Router',
+      'Tailwind CSS',
+      'Material UI',
+      'Vite',
+    ],
+  },
+  {
+    group: 'Architecture',
+    items: ['Feature-Sliced Design', 'Atomic Design', 'Dependency injection (Inversify)'],
+  },
   { group: 'Testing', items: ['Jest', 'Cypress', 'Unit & integration', 'TDD'] },
-  { group: 'Data & visualization', items: ['ArcGIS JS SDK', 'Recharts', 'Chart.js', 'REST', 'GraphQL', 'Swagger'] },
-  { group: 'Backend & tools', items: ['Node.js', 'NestJS', 'PostgreSQL', 'MongoDB', 'SQLite', 'Docker', 'Git', 'ESLint'] },
+  {
+    group: 'Data & visualization',
+    items: ['ArcGIS JS SDK', 'Recharts', 'Chart.js', 'REST', 'GraphQL', 'Swagger'],
+  },
+  {
+    group: 'Backend & tools',
+    items: ['Node.js', 'NestJS', 'PostgreSQL', 'MongoDB', 'SQLite', 'Docker', 'Git', 'ESLint'],
+  },
 ];
 
 export const education = {
@@ -82,9 +106,43 @@ export const education = {
   period: '2019 — 2023 · top 15% of class',
 };
 
-export const projects = [
-  { name: 'effector-vite-template', stars: 21, lang: 'TypeScript', desc: 'Dockerized React + Effector + Feature-Sliced Design + Vite starter. My most-starred repository.', href: 'https://github.com/ifeelBALANCED/effector-vite-template' },
-  { name: 'nest-react-monorepo', stars: 1, lang: 'TypeScript', desc: 'Nest.js and React in one monorepo behind Nginx, containerized with Docker.', href: 'https://github.com/ifeelBALANCED/nest-react-monorepo' },
-  { name: 'task-planner-nest-bot', stars: 3, lang: 'TypeScript', desc: 'Telegram task-planner bot built with Telegraf, Nest.js and Postgres.', href: 'https://github.com/ifeelBALANCED/task-planner-nest-bot' },
-  { name: 'vite-todo-app', stars: 2, lang: 'TypeScript', desc: 'React app with authentication, Chakra UI, Cypress e2e tests, ESLint, Prettier and git hooks.', href: 'https://github.com/ifeelBALANCED/vite-todo-app' },
+export interface Project {
+  name: string;
+  stars: number;
+  lang: string;
+  desc: string;
+  href: string;
+  demo?: string;
+}
+
+export const projects: Project[] = [
+  {
+    name: 'effector-vite-template',
+    stars: 21,
+    lang: 'TypeScript',
+    desc: 'Dockerized React + Effector + Feature-Sliced Design + Vite starter. My most-starred repository.',
+    href: 'https://github.com/ifeelBALANCED/effector-vite-template',
+    demo: 'https://effector-vite-template.surge.sh',
+  },
+  {
+    name: 'nest-react-monorepo',
+    stars: 1,
+    lang: 'TypeScript',
+    desc: 'Nest.js and React in one monorepo behind Nginx, containerized with Docker.',
+    href: 'https://github.com/ifeelBALANCED/nest-react-monorepo',
+  },
+  {
+    name: 'task-planner-nest-bot',
+    stars: 3,
+    lang: 'TypeScript',
+    desc: 'Telegram task-planner bot built with Telegraf, Nest.js and Postgres.',
+    href: 'https://github.com/ifeelBALANCED/task-planner-nest-bot',
+  },
+  {
+    name: 'vite-todo-app',
+    stars: 2,
+    lang: 'TypeScript',
+    desc: 'React app with authentication, Chakra UI, Cypress e2e tests, ESLint, Prettier and git hooks.',
+    href: 'https://github.com/ifeelBALANCED/vite-todo-app',
+  },
 ];
