@@ -26,21 +26,21 @@
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "@fontsource-variable/onest": "^5.3.1",
-    "astro": "^7.4.2"
+    "astro": "^7.4.7"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@axe-core/playwright": "^4.14.0",
-    "@playwright/test": "^1.64.1",
-    "@tailwindcss/vite": "^4.3.3",
+    "@playwright/test": "^1.65.0",
+    "@tailwindcss/vite": "^4.3.5",
     "@types/node": "^24.19.2",
-    "@vitest/coverage-v8": "^5.0.5",
-    "knip": "^6.43.0",
-    "oxfmt": "^0.75.0",
-    "oxlint": "^1.90.0",
-    "tailwindcss": "^4.3.3",
+    "@vitest/coverage-v8": "^5.1.0",
+    "knip": "^6.44.2",
+    "oxfmt": "^0.77.0",
+    "oxlint": "^1.92.0",
+    "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   },
   "engines": {
     "node": "24.x"
